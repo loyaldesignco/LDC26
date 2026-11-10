@@ -23,17 +23,40 @@ const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
 // production domain; anywhere it doesn't load, type falls back to Helvetica Neue.
 const typekit = (import.meta.env.PUBLIC_TYPEKIT_KIT as string | undefined) ?? "maf3dwv";
 
+const site = Astro.site!.toString().replace(/\/$/, "");
+const norm = (u: string) => u.trim().replace(/^http:/, "https:").replace(/\/$/, "");
+const sameAs = [...new Map([...settings.socials.map((s) => s.url), ...(settings.sameAs ?? [])].map((u) => [norm(u).toLowerCase().replace("://www.", "://"), u.trim()])).values()];
 const orgSchema = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
-  name: settings.title,
-  url: Astro.site?.toString(),
-  email: settings.email,
-  description: settings.description,
-  foundingDate: "2011",
-  logo: new URL("/brand/loyal-mark-black.svg", Astro.site).toString(),
-  address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
-  sameAs: settings.socials.map((s) => s.url),
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": `${site}/#organization`,
+      name: "Loyal Design Co.",
+      alternateName: ["Loyal Design Co", "Loyal Design", "LOYAL"],
+      url: `${site}/`,
+      email: settings.email,
+      description: settings.description,
+      slogan: "Beyond Aesthetics. Action.",
+      foundingDate: "2011",
+      founder: { "@type": "Person", name: "Brian Punger" },
+      logo: { "@type": "ImageObject", url: `${site}/brand/loyal-logo-512.png`, width: 512, height: 512 },
+      image: `${site}/brand/loyal-logo-512.png`,
+      address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
+      areaServed: { "@type": "Country", name: "United States" },
+      knowsAbout: ["Branding", "Brand identity", "Logo design", "Webflow development", "Web design", "Product design", "Brand strategy"],
+      award: settings.credentials.filter((c) => /partner/i.test(c)),
+      sameAs,
+    },
+    {
+      "@type": "WebSite",
+      "@id": `${site}/#website`,
+      url: `${site}/`,
+      name: "Loyal Design Co.",
+      publisher: { "@id": `${site}/#organization` },
+      inLanguage: "en-US",
+    },
+  ],
 };
 ---
 

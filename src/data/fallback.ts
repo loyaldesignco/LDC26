@@ -34,6 +34,14 @@ export const settings: SiteSettings = {
     { label: "Dribbble", url: "https://dribbble.com/loyal-design-co" },
   ],
   credentials: ["Webflow Certified Partner", "Est. 2011, New York"],
+  sameAs: [
+    "https://www.facebook.com/loyaldesignco/",
+    "https://www.instagram.com/loyaldesignco/",
+    "https://webflow.com/@loyaldesignco",
+    "https://x.com/loyaldesignco",
+    "https://clutch.co/profile/loyal-design-co",
+    "https://www.google.com/search?kgmid=/g/1vhlz36r",
+  ],
   heroSlides: [
     {
       image: { url: "/hero/leandro-lo.webp", alt: "" },

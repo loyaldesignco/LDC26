@@ -142,6 +142,13 @@ export const siteSettings = defineType({
     defineField({ name: "credentials", type: "array", of: [defineArrayMember({ type: "string" })] }),
     defineField({ name: "process", type: "array", of: [defineArrayMember({ type: "processStep" })] }),
     defineField({
+      name: "sameAs",
+      title: "Other profiles (SEO)",
+      type: "array",
+      of: [defineArrayMember({ type: "url" })],
+      description: "Profiles that identify the studio to search engines (Clutch, Webflow, Facebook, X). Not shown on the site; the socials above are included automatically.",
+    }),
+    defineField({
       name: "heroSlides",
       title: "Home hero slides",
       type: "array",

@@ -67,7 +67,7 @@ export const getSettings = () =>
   query<SiteSettings>(
     `*[_id == "siteSettings"][0]{
       title, description, email, location, timezone, coordinates,
-      availability, "socials": coalesce(socials, []), "credentials": coalesce(credentials, []),
+      availability, "socials": coalesce(socials, []), "sameAs": coalesce(sameAs, []), "credentials": coalesce(credentials, []),
       "process": coalesce(process, []),
       "heroSlides": coalesce(heroSlides, []), "homePanels": coalesce(homePanels, []),
       processImage, portrait, "clients": coalesce(clients, [])

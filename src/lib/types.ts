@@ -129,6 +129,8 @@ export interface SiteSettings {
     note: string;
   };
   socials: { label: string; url: string }[];
+  /** Extra profiles for schema.org sameAs only (directories, review sites). Socials are included automatically. */
+  sameAs?: string[];
   credentials: string[];
   process: ProcessStep[];
   /** Home hero backgrounds. Two or more cross-fade with a lens transition. */
