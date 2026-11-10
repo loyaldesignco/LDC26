@@ -71,6 +71,9 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
       </div>
 
       <form method="post" action={endpoint || undefined} data-endpoint={endpoint || ""} data-email={settings.email} class="grid gap-5" novalidate data-contact-form>
+        <!-- Spam trap: people never see or fill this; bots do, and Formspree drops those. -->
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px] size-px opacity-0" />
+        <input type="hidden" name="_subject" value="New project inquiry, loyal.design" />
         <fieldset data-step class="m-0 grid gap-5 border-0 p-0">
           <legend class="sr-only">Contact</legend>
           <label class="field"><span>Full name</span><input name="name" autocomplete="name" placeholder="Alex Morgan" required /></label>
