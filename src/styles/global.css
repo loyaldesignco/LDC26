@@ -503,3 +503,6 @@ details.lp-acc:hover { background: rgb(249 246 240 / 0.03); }
 
 /* Rail labels only where the gutter is wide enough to hold them. */
 @media (max-width: 1499px) { [data-rail-item] > span:last-child { display: none; } }
+
+/* reCAPTCHA v3 badge: hidden, with Google's required notice shown under the contact form instead. */
+.grecaptcha-badge { visibility: hidden !important; }

@@ -5,6 +5,8 @@ import { getSettings } from "@/lib/sanity";
 const settings = await getSettings();
 // Formspree form "loyal.design contact". Set PUBLIC_FORM_ENDPOINT to an empty string to fall back to the visitor's email app.
 const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? "https://formspree.io/f/mzerprgn";
+// Google reCAPTCHA v3 site key (public). The matching secret lives in Formspree's form settings.
+const recaptchaKey = (import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined) ?? "";
 const instagram = settings.socials.find((s) => /instagram/i.test(s.label));
 const channels = [
   { label: "[ Email ]", value: settings.email, href: `mailto:${settings.email}` },
@@ -71,7 +73,7 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
         </div>
       </div>
 
-      <form method="post" action={endpoint || undefined} data-endpoint={endpoint || ""} data-email={settings.email} class="grid gap-5" novalidate data-contact-form>
+      <form method="post" action={endpoint || undefined} data-endpoint={endpoint || ""} data-email={settings.email} data-recaptcha={recaptchaKey} class="grid gap-5" novalidate data-contact-form>
         <!-- Spam trap: people never see or fill this; bots do, and Formspree drops those. -->
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px] size-px opacity-0" />
         <input type="hidden" name="_subject" value="New project inquiry, loyal.design" />
@@ -99,6 +101,14 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
           <span class="mono text-paper/40" data-progress></span>
         </div>
         <p class="m-0 text-[0.94rem] text-pink" role="alert" data-error></p>
+        {
+          recaptchaKey && (
+            <p class="mono m-0 text-[0.6rem] leading-relaxed text-paper/35">
+              Protected by reCAPTCHA. Google's <a class="u-link" href="https://policies.google.com/privacy" rel="noopener" target="_blank">Privacy Policy</a> and{" "}
+              <a class="u-link" href="https://policies.google.com/terms" rel="noopener" target="_blank">Terms of Service</a> apply.
+            </p>
+          )
+        }
       </form>
     </div>
   </section>
@@ -152,9 +162,31 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
     return missing.length === 0;
   }
 
+  // reCAPTCHA v3: load Google's script the first time someone touches the form, not on page load.
+  const siteKey = form.dataset.recaptcha;
+  let recaptcha: Promise<void> | null = null;
+  const loadRecaptcha = () =>
+    (recaptcha ??= new Promise<void>((resolve, reject) => {
+      const s = document.createElement("script");
+      s.src = `https://www.google.com/recaptcha/api.js?render=${siteKey}`;
+      s.async = true;
+      s.onload = () => (window as any).grecaptcha.ready(() => resolve());
+      s.onerror = () => { recaptcha = null; reject(new Error("recaptcha")); };
+      document.head.append(s);
+    }));
+  if (siteKey) form.addEventListener("focusin", () => loadRecaptcha().catch(() => {}), { once: true });
+
   async function send() {
     const data = new FormData(form);
     const endpoint = form.dataset.endpoint;
+    if (endpoint && siteKey) {
+      try {
+        await loadRecaptcha();
+        data.set("g-recaptcha-response", await (window as any).grecaptcha.execute(siteKey, { action: "submit" }));
+      } catch {
+        /* Formspree will answer with an error, handled below */
+      }
+    }
     if (!endpoint) {
       // No form backend configured: hand the message to the visitor's email app.
       const lines = ["name", "company", "email", "type", "budget", "timeline", "source"].map((k) => `${k[0].toUpperCase() + k.slice(1)}: ${data.get(k) || "-"}`);
