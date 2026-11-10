@@ -6,7 +6,7 @@ const settings = await getSettings();
 // Formspree form "loyal.design contact". Set PUBLIC_FORM_ENDPOINT to an empty string to fall back to the visitor's email app.
 const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? "https://formspree.io/f/mzerprgn";
 // Google reCAPTCHA v3 site key (public). The matching secret lives in Formspree's form settings.
-const recaptchaKey = (import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined) ?? "";
+const recaptchaKey = (import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined) ?? "6LfBZxouAAAAAD0_hBnghwU2YtQe4kdTR_2k8m8Z";
 const instagram = settings.socials.find((s) => /instagram/i.test(s.label));
 const channels = [
   { label: "[ Email ]", value: settings.email, href: `mailto:${settings.email}` },
