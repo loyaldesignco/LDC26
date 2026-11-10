@@ -1,0 +1,99 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "astro",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "trailingSlash": false,
+  "redirects": [
+    {
+      "source": "/home",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/maeda-akashio",
+      "destination": "/work/maeda-akashio",
+      "permanent": true
+    },
+    {
+      "source": "/guarded-globe",
+      "destination": "/work/guarded-globe",
+      "permanent": true
+    },
+    {
+      "source": "/all-roads-counseling",
+      "destination": "/work/all-roads-counseling",
+      "permanent": true
+    },
+    {
+      "source": "/shellproof-security",
+      "destination": "/work/shellproof-security",
+      "permanent": true
+    },
+    {
+      "source": "/maeda-red-label",
+      "destination": "/work/maeda-red-label",
+      "permanent": true
+    },
+    {
+      "source": "/2022-choke-republic-collection",
+      "destination": "/work/choke-republic-2022",
+      "permanent": true
+    },
+    {
+      "source": "/love-bridal-branding",
+      "destination": "/work/love-bridal",
+      "permanent": true
+    },
+    {
+      "source": "/bgd-enterprises",
+      "destination": "/work/bgd-enterprises",
+      "permanent": true
+    },
+    {
+      "source": "/choke-republic-design-tee-design",
+      "destination": "/work/choke-republic-tee",
+      "permanent": true
+    },
+    {
+      "source": "/kingz-balistico-design",
+      "destination": "/work/kingz-balistico",
+      "permanent": true
+    },
+    {
+      "source": "/david-branch-brazilian-jiu-jitsu-logo",
+      "destination": "/work/david-branch",
+      "permanent": true
+    },
+    {
+      "source": "/rollshop-branding",
+      "destination": "/work/rollshop",
+      "permanent": true
+    },
+    {
+      "source": "/ronin-emperor",
+      "destination": "/work/ronin-emperor",
+      "permanent": true
+    }
+  ],
+  "headers": [
+    {
+      "source": "/_astro/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/(work|hero|design|clients|brand|fonts)/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, stale-while-revalidate=86400"
+        }
+      ]
+    }
+  ]
+}

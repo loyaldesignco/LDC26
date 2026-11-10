@@ -1,0 +1,111 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getProjects, getSettings } from "@/lib/sanity";
+import { src } from "@/lib/media";
+
+const [settings, projects] = await Promise.all([getSettings(), getProjects()]);
+const years = new Date().getFullYear() - 2011;
+// Counted from the portfolio so they stay true as work is added.
+const stats = [
+  { label: "Years in practice", value: String(years) },
+  { label: "Projects in the portfolio", value: String(projects.length) },
+  { label: "Industries", value: String(new Set(projects.map((p) => p.industry)).size) },
+  { label: "Service lines", value: "4" },
+];
+const principles = [
+  { name: "One designer, start to finish", desc: "The person in the kickoff call is the person drawing the logo and building the site. Nothing gets lost in a handoff because there is no handoff." },
+  { name: "Strategy before surface", desc: "We ask what the business is actually trying to win before anyone opens Figma. Design decisions that cannot be defended in a sentence get cut." },
+  { name: "Built to be handed over", desc: "Systems, files and CMS structures your team can run without us. Documentation is part of the deliverable, not an upsell." },
+  { name: "Small on purpose", desc: "Senior collaborators brought in per project. No account layer, no capacity problem solved by hiring someone junior onto your budget." },
+];
+const timeline = [
+  { year: "2011", text: "Founded in New York as a one-person identity practice." },
+  { year: "2015", text: "First full brand-and-website engagements, and the Kingz Balistico gi. Webflow becomes the default build platform." },
+  { year: "2018", text: "Work expands into product and UI: dashboards, apps and design systems." },
+  { year: "2022", text: "Certified Webflow partner. Migrations off WordPress become a standing part of the practice." },
+  { year: "Today", text: "Four service lines, a referral-led client list, and a studio that still fits in one room." },
+];
+---
+
+<BaseLayout title="About" description="Loyal Design Co is a New York design and Webflow studio, est. 2011, run by a designer rather than an account team.">
+  <section class="gutter pb-[clamp(56px,8vw,110px)] pt-[clamp(104px,11vw,160px)]">
+    <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+      <span>[ About the studio ]</span>
+      <span>New York · Est. 2011</span>
+    </div>
+    <h1 data-split class="display-page max-w-[18ch]">Run by a <em class="accent !text-[1.1em]">designer</em>, not an account team</h1>
+    <div class="mt-[clamp(48px,7vw,96px)] grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[clamp(32px,6vw,88px)]">
+      <h2 data-split class="display-m max-w-[20ch]">Fifteen years, one pair of hands on every project.</h2>
+      <div>
+        <p data-reveal class="lede m-0 max-w-[54ch]">Loyal Design Co. is led by <strong class="font-semibold text-paper">Brian Punger</strong>, a New York designer who has spent fifteen years building identities and websites for businesses that outgrow their first logo. Every project gets his hands on it: strategy sessions, sketches, final files.</p>
+        <p data-reveal class="lede mb-0 mt-5 max-w-[54ch]">The studio stays deliberately small: senior collaborators brought in per project, no juniors learning on your budget, and a client list that mostly arrives by referral.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gutter pb-[clamp(64px,9vw,130px)]">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-[clamp(32px,6vw,88px)]">
+      <div data-reveal data-parallax class="frame aspect-[4/5] rounded-xl">
+        {settings.portrait && <img src={src(settings.portrait, 1400)} alt={settings.portrait.alt ?? ""} loading="lazy" />}
+        <div class="wash opacity-60"></div>
+      </div>
+      <div>
+        <p data-reveal class="eyebrow mb-[clamp(24px,3vw,40px)]">[ By the numbers ]</p>
+        <dl data-reveal class="m-0 grid grid-cols-2 gap-x-[clamp(20px,3vw,48px)] gap-y-[clamp(28px,4vw,56px)]">
+          {
+            stats.map((s) => (
+              <div class="border-t border-paper/[0.18] pt-4">
+                <dt class="mono mb-3 text-paper/45">{s.label}</dt>
+                <dd class="m-0 text-[clamp(2.6rem,6vw,5rem)] font-bold leading-none tracking-[-0.04em] tabular-nums">{s.value}</dd>
+              </div>
+            ))
+          }
+        </dl>
+        <p data-reveal class="lede mb-0 mt-[clamp(32px,4vw,56px)] max-w-[48ch]">Work spans combat sports, cybersecurity, mental health, construction and consumer goods. The common thread is founders who care what their company looks like when it grows up.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="gutter border-t border-paper/12 py-[clamp(72px,10vw,150px)]">
+    <p data-reveal class="eyebrow mb-[clamp(32px,5vw,64px)]">[ How we work ]</p>
+    <div class="border-b border-paper/16">
+      {
+        principles.map((p, i) => (
+          <div class="lp-cap" data-reveal>
+            <span class="lp-cap-rule" />
+            <span class="lp-cap-num mono text-paper/45">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="m-0 text-[clamp(1.3rem,2.4vw,2rem)] font-bold leading-[1.05] tracking-[-0.025em]">{p.name}</h3>
+            <p class="m-0 max-w-[52ch] text-[1rem] leading-relaxed text-paper/60">{p.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="gutter grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[clamp(32px,6vw,88px)] border-t border-paper/12 py-[clamp(72px,10vw,150px)]">
+    <div>
+      <p data-reveal class="eyebrow mb-4">[ The short version ]</p>
+      <h2 data-split class="display-l max-w-[14ch]">A studio built slowly, on purpose.</h2>
+    </div>
+    <ol data-reveal class="m-0 list-none border-b border-paper/16 p-0">
+      {
+        timeline.map((t) => (
+          <li class="grid grid-cols-[5rem_minmax(0,1fr)] gap-6 border-t border-paper/16 px-2 py-5 transition-colors hover:bg-paper/[0.04]">
+            <span class="mono pt-1 text-paper/50">{t.year}</span>
+            <p class="m-0 leading-relaxed text-paper/75">{t.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="gutter border-t border-paper/12 py-[clamp(80px,11vw,160px)]">
+    <div data-reveal class="flex flex-wrap items-end justify-between gap-8">
+      <h2 data-split class="display-l max-w-[14ch]">Tell us what you're <em class="accent capitalize">building</em></h2>
+      <div class="flex flex-wrap gap-3">
+        <a href="/contact" class="btn btn-solid">Start a project →</a>
+        <a href="/work" class="btn btn-ghost">See the work</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

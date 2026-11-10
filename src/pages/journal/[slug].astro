@@ -1,0 +1,44 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import { formatDate, getPost, getPosts, renderBody } from "@/lib/sanity";
+import { src } from "@/lib/media";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((p) => ({
+    params: { slug: p.slug },
+    props: { more: posts.filter((o) => o.slug !== p.slug).slice(0, 2) },
+  }));
+}
+
+const { slug } = Astro.params;
+const { more } = Astro.props;
+const post = await getPost(slug!);
+if (!post) return Astro.redirect("/404");
+const body = renderBody(post.body);
+---
+
+<BaseLayout title={post.title} description={post.excerpt} image={src(post.cover, 1200, 630) || undefined}>
+  <article class="gutter pb-[clamp(64px,9vw,130px)] pt-[clamp(104px,11vw,160px)]">
+    <div class="mb-[clamp(20px,3vw,36px)]"><a href="/journal" class="mono grad-hover text-[0.7rem] font-bold text-paper/60">← Journal</a></div>
+    <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+      <span>[ {post.category} ]</span>
+      <time datetime={post.publishedAt}>{formatDate(post.publishedAt)}</time>
+    </div>
+    <h1 data-split class="display-page max-w-[20ch] !text-[clamp(2.2rem,5.6vw,5rem)]">{post.title}</h1>
+    <p data-reveal class="mb-0 mt-[clamp(24px,3vw,40px)] max-w-[40ch] text-[clamp(1.2rem,1.8vw,1.6rem)] font-medium leading-[1.4]">{post.excerpt}</p>
+    {post.cover && <div data-parallax="hero" class="frame mt-[clamp(40px,6vw,80px)] aspect-[2.2] rounded-xl"><img src={src(post.cover, 2400)} alt="" /></div>}
+    <div data-reveal class="prose-loyal mt-[clamp(48px,7vw,96px)] md:ml-[33%]" set:html={body} />
+  </article>
+
+  {
+    more.length > 0 && (
+      <section class="gutter border-t border-paper/12 py-[clamp(64px,9vw,120px)]" aria-labelledby="more-heading">
+        <p class="eyebrow mb-4">[ Journal ]</p>
+        <h2 id="more-heading" class="display-m mb-[clamp(28px,4vw,48px)]">Keep reading</h2>
+        <div class="border-b border-paper/[0.18]">{more.map((p, i) => <PostCard post={p} index={i} />)}</div>
+      </section>
+    )
+  }
+</BaseLayout>

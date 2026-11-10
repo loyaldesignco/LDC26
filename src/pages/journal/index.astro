@@ -1,0 +1,26 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import PostCard from "@/components/PostCard.astro";
+import { getPosts } from "@/lib/sanity";
+
+const posts = await getPosts();
+---
+
+<BaseLayout title="Journal" description="Notes on Webflow, search and running a small studio, from Loyal Design Co.">
+  <section class="gutter pb-[clamp(80px,12vw,170px)] pt-[clamp(110px,12vw,170px)]">
+    <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+      <span>[ Journal ]</span>
+      <span>{posts.length} {posts.length === 1 ? "note" : "notes"}</span>
+    </div>
+    <h1 data-split class="display-page mb-[clamp(32px,5vw,64px)] max-w-[14ch]">Notes from the <em class="accent !text-[1.1em]">studio</em>.</h1>
+    {
+      posts.length ? (
+        <div data-reveal class="border-b border-paper/[0.18]">
+          {posts.map((post, i) => <PostCard post={post} index={i} />)}
+        </div>
+      ) : (
+        <p class="lede">The first post is being written. Check back soon.</p>
+      )
+    }
+  </section>
+</BaseLayout>

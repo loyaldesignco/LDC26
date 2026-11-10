@@ -1,0 +1,218 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import ClientMarquee from "@/components/ClientMarquee.astro";
+import LocalTime from "@/components/LocalTime.astro";
+import { categoriesOf, getProjects, getServices, getSettings, WORK_CATEGORIES } from "@/lib/sanity";
+import { logoUrl, src } from "@/lib/media";
+import type { Service } from "@/lib/types";
+
+const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
+
+const slides = settings.heroSlides.filter((s) => s.image);
+const first = slides[0];
+const heroMeta = slides.map((s) => ({ label: s.label, href: s.href ?? "/work", logo: logoUrl(s.logo) ?? "" }));
+const counts = WORK_CATEGORIES.map((c) => ({ label: c, n: projects.filter((p) => categoriesOf(p).includes(c)).length })).filter((c) => c.n > 0);
+const serviceHref = (s: Service) => (s.slug ? `/services/${s.slug}` : `/work?f=${encodeURIComponent(s.workFilter ?? "All")}`);
+const abbr: Record<string, string> = { Instagram: "IG", Behance: "BE", Dribbble: "DR", LinkedIn: "LI", Facebook: "FB", X: "X" };
+const chapters = [
+  ["studio", "Studio"],
+  ["work", "Work"],
+  ["clients", "Clients"],
+  ["services", "Services"],
+  ["process", "Process"],
+  ["contact", "Contact"],
+];
+const principles = [
+  { label: "Strategy First", lines: ["Think it through.", "Then make it", "look inevitable."] },
+  { label: "Craft Always", lines: ["Details drawn.", "Systems documented.", "Nothing decorative."] },
+  { label: "Loyalty Earned", lines: ["Long partnerships.", "Straight answers.", "Work that holds."] },
+];
+const depths = [6, 10, 4.5];
+---
+
+<BaseLayout intro="home">
+  <Fragment slot="head">
+    {first && <link rel="preload" as="image" href={src(first.image, 2400)} fetchpriority="high" />}
+  </Fragment>
+
+  <nav slot="chrome" data-chapter-rail aria-hidden="true" class="pointer-events-none fixed left-[clamp(10px,1.4vw,20px)] top-1/2 z-40 -translate-y-1/2 flex-col gap-[15px]">
+    {chapters.map(([id, label]) => <span data-rail-item data-for={id} class="flex items-center gap-2.5"><span /><span>{label}</span></span>)}
+  </nav>
+
+  <!-- 00 Hero -->
+  <section id="top" data-hero class="lp-hero relative flex min-h-[115svh] flex-col overflow-clip bg-plum">
+    {first && <img data-parallax-img src={src(first.image, 2400)} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
+    {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 2400)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
+    <div class="wash"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
+
+    {
+      settings.credentials.some((c) => /webflow/i.test(c)) && (
+        <div class="absolute right-0 top-[9%] z-[5] leading-none">
+          <img src="/brand/webflow-badge.svg" alt="Webflow Certified Partner" width="47" height="254" class="h-[clamp(180px,22vw,254px)] w-auto" />
+        </div>
+      )
+    }
+
+    <div class="relative z-[3] flex flex-col pt-16">
+      <div data-hud class="lp-hud-row gutter mono flex items-start justify-between gap-4 pt-[clamp(16px,2.5vw,32px)] text-[0.7rem] text-paper/70">
+        <span class="flex items-center gap-2"><span class="inline-block size-1.5 rounded-full bg-pink"></span><span class="tabular-nums">New York <LocalTime timezone={settings.timezone} /></span></span>
+        <span class="tabular-nums">Est. 2011</span>
+      </div>
+      <div class="gutter relative flex flex-1 flex-col pt-[clamp(64px,9vh,120px)]">
+        <div class="lp-hero-grid grid grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)] items-start gap-[clamp(24px,4vw,64px)]">
+          <div>
+            <h1 data-split class="display-xl">Beyond <img src="/brand/globe-wireframe.svg" alt="" class="ml-[0.12em] inline-block h-[0.42em] w-auto align-baseline" width="147" height="54" /><br />Aesthetics.<br /><em class="accent !text-[1em] !leading-[inherit] text-paper/90">Action.</em></h1>
+            <div data-hud class="mt-[clamp(24px,3vw,48px)] flex items-center gap-1.5 text-[0.72rem] font-bold uppercase tracking-[0.12em] text-paper/85">
+              {settings.socials.map((s, i) => (
+                <>
+                  {i > 0 && <span class="opacity-50" aria-hidden="true">/</span>}
+                  <a href={s.url} class="grad-hover" rel="me noopener" target="_blank" aria-label={s.label}>{abbr[s.label] ?? s.label}</a>
+                </>
+              ))}
+            </div>
+          </div>
+          <div data-hud class="lp-hero-copy flex flex-col gap-[clamp(48px,10vh,140px)] pt-[clamp(8px,4vh,64px)]">
+            <p class="m-0 max-w-[36ch] text-[clamp(0.94rem,1.1vw,1.08rem)] leading-[1.55] text-paper/90">We’re LOYAL, a multidisciplinary agency built for emerging &amp; established brands since 2011.</p>
+            <p class="m-0 max-w-[34ch] self-end pr-[max(0px,calc(55px-4.5vw))] text-right text-[clamp(1.2rem,1.8vw,1.7rem)] font-medium leading-[1.45]">Strategy-first branding, web and design for brands that compete, built to look the part and move like it.</p>
+          </div>
+        </div>
+        <div data-hud class="mt-[clamp(16px,2vw,28px)] flex justify-between text-[0.72rem] font-bold uppercase tracking-[0.12em] text-paper/85">
+          <a href={`mailto:${settings.email}`} class="grad-hover">{settings.email}</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="relative z-[3] flex flex-1 flex-col justify-start">
+      <div class="lp-hero-sticky gutter sticky top-[140px] pb-[clamp(28px,4vh,56px)] pt-[clamp(24px,4vh,56px)]">
+        {
+          heroMeta[0] && (
+            <div data-hero-note class="lp-hero-note pointer-events-none mx-auto mb-[clamp(14px,2vh,24px)] flex w-[90%] items-center justify-end">
+              <a data-hero-note-label href={heroMeta[0].href} class="pointer-events-auto flex items-baseline gap-2.5 pr-4">
+                <span class="mono text-[0.64rem] tracking-[0.08em] text-paper/55">[ Background ]</span>
+                {heroMeta[0].logo && <span data-hero-note-logo aria-hidden="true" class="inline-block size-4 self-center bg-paper" style={`-webkit-mask:url('${heroMeta[0].logo}') center/contain no-repeat;mask:url('${heroMeta[0].logo}') center/contain no-repeat`} />}
+                <span data-hero-note-text class="mono text-[0.72rem] font-bold text-paper">{heroMeta[0].label} ↗</span>
+              </a>
+              <div data-hero-note-line class="h-px w-[clamp(60px,9vw,150px)] origin-right scale-x-0 bg-paper/60"></div>
+              <span class="ml-1.5 inline-block size-2 rounded-full bg-pink shadow-[0_0_0_4px_rgba(255,74,161,0.25)]"></span>
+            </div>
+          )
+        }
+        <div data-glass-banner class="glass mx-auto mb-[clamp(32px,6vh,72px)] mt-11 w-[90%] rounded-3xl">
+          <div class="glass-blur"></div><div class="glass-tint"></div><div class="glass-edge"></div><div class="glass-sheen" data-glass-sheen></div>
+          <div class="glass-body lp-banner-items flex flex-wrap items-baseline justify-around gap-[clamp(20px,4vw,48px)] px-[clamp(20px,3vw,48px)] py-[clamp(28px,4vw,56px)]">
+            {counts.map((c) => (
+              <a href={`/work?f=${encodeURIComponent(c.label)}`} data-roll class="font-serif text-[clamp(1.8rem,3.4vw,3.2rem)] leading-none">{c.label}<sup class="ml-[0.3em] align-super font-sans text-[0.32em] font-normal opacity-80" aria-label={`${c.n} projects`}>{c.n}</sup></a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 01 Studio -->
+  <section id="studio" data-chapter class="gutter flex min-h-[72svh] flex-col justify-center pb-[clamp(56px,7vw,96px)] pt-[clamp(88px,13vw,190px)]">
+    <p data-reveal class="eyebrow mb-[clamp(24px,4vw,48px)]">[ 01 ] &nbsp;The Short Version</p>
+    <p data-split class="m-0 max-w-[26ch] text-[clamp(2rem,5.4vw,4.8rem)] font-bold leading-none tracking-[-0.035em]">A New York studio making brands people stay <em class="accent capitalize">loyal</em> to.</p>
+    <p data-reveal class="lede mt-[clamp(28px,4vw,48px)] max-w-[54ch] !text-[1.13rem]">Since 2011 we've partnered with emerging and established businesses on identity, web and graphic design. Strategy first, craft always, no decoration for its own sake.</p>
+    <div data-reveal class="mt-[clamp(40px,5vw,68px)] flex items-center gap-3.5">
+      <span class="block h-px w-[clamp(40px,5vw,72px)] bg-paper/30"></span>
+      <span class="mono tracking-[0.09em] text-paper/40">02 &nbsp;/ &nbsp;Selected work below</span>
+    </div>
+  </section>
+
+  <!-- 02 Work panels -->
+  <section id="work" data-chapter class="lp-rp relative bg-ink" aria-label="Recent projects">
+    {
+      settings.homePanels.slice(0, 3).map((img, i) => (
+        <div class="lp-rp-panel frame">
+          <span data-parallax data-depth={depths[i]} class="absolute inset-0 block">
+            <img src={src(img, 1400)} alt={img.alt ?? ""} loading="lazy" class="size-full object-cover" />
+          </span>
+          {i === 0 && (
+            <>
+              <span class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.5)_0%,rgba(10,10,10,0)_55%)]" />
+              <a href="/work" data-roll-host class="glass absolute bottom-[clamp(16px,2.4vw,40px)] left-[clamp(16px,2.4vw,40px)] z-[3] block rounded-[20px]">
+                <span class="glass-blur" /><span class="glass-tint" /><span class="glass-edge" /><span class="glass-sheen" data-glass-sheen />
+                <span class="glass-body block px-[clamp(22px,2.6vw,40px)] py-[clamp(16px,1.8vw,28px)]">
+                  <span class="block text-[clamp(0.85rem,1.1vw,1.05rem)] tracking-[-0.01em] text-paper/90">Latest</span>
+                  <span data-roll class="block font-serif text-[clamp(2rem,3.6vw,3.4rem)] leading-[1.05]">Projects</span>
+                </span>
+              </a>
+            </>
+          )}
+        </div>
+      ))
+    }
+  </section>
+
+  <!-- 03 Clients -->
+  <section id="clients" data-chapter class="gutter border-t border-paper/12 pb-[clamp(34px,4.5vw,52px)] pt-[clamp(28px,4vw,44px)]">
+    <p class="eyebrow mb-[clamp(20px,3vw,32px)]">[ 03 ] &nbsp;Selected Clients</p>
+    <ClientMarquee clients={settings.clients} />
+  </section>
+
+  <!-- 04 Services -->
+  <section id="services" data-chapter class="gutter border-t border-paper/12 pb-[clamp(64px,8vw,110px)] pt-[clamp(96px,12vw,170px)]">
+    <p data-reveal class="eyebrow mb-4 text-paper/50">[ 04 ] &nbsp;Services</p>
+    <h2 data-split class="display-l mb-[clamp(48px,7vw,96px)]">What we <em class="accent capitalize">do</em></h2>
+    <div data-svc-list class="bleed flex flex-col border-b border-paper/14">
+      {
+        services.map((s, i) => (
+          <a class="lp-svc-row" data-svc-row href={serviceHref(s)}>
+            <span class="mono text-paper/40">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="lp-svc-title m-0 text-[clamp(1.3rem,2.6vw,2.2rem)] font-bold leading-[1.02] tracking-[-0.03em]">{s.title}</h3>
+            <p class="lp-svc-desc mono m-0 text-[0.72rem] leading-[1.7] tracking-[0.05em] text-paper/50">{s.summary}</p>
+            <span class="lp-svc-thumb frame block aspect-[4/3] w-[clamp(160px,20vw,340px)] bg-ink" data-parallax data-depth="8">
+              {s.image && <img src={src(s.image, 700)} alt="" loading="lazy" class="size-full object-cover" />}
+            </span>
+            <span class="lp-svc-arrow block text-base" aria-hidden="true">→</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <!-- 05 Process -->
+  <section id="process" data-chapter class="relative flex min-h-[82svh] items-center overflow-hidden bg-ink">
+    {
+      settings.processImage && (
+        <div data-parallax class="absolute inset-0 overflow-hidden">
+          <img src={src(settings.processImage, 2000)} alt="" loading="lazy" class="size-full object-cover" />
+        </div>
+      )
+    }
+    <div class="wash"></div>
+    <div class="pointer-events-none absolute inset-0 bg-ink/45"></div>
+    <div class="gutter relative w-full py-[clamp(64px,9vw,120px)]">
+      <p data-reveal class="eyebrow mb-[clamp(32px,5vw,64px)] text-paper/60">[ 05 ] &nbsp;How We Work</p>
+      <div data-reveal class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(32px,5vw,72px)]">
+        {
+          principles.map((p) => (
+            <div>
+              <p class="mono mb-3.5 text-paper/55">[ {p.label} ]</p>
+              <p class="m-0 text-[clamp(1.6rem,3vw,2.4rem)] font-bold leading-[1.05]">{p.lines.map((l, i) => <>{i > 0 && <br />}{l}</>)}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 Contact -->
+  <section id="contact" data-chapter class="gutter pb-[clamp(80px,10vw,140px)] pt-[clamp(96px,12vw,170px)]">
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-end gap-[clamp(32px,6vw,88px)]">
+      <div>
+        <p class="eyebrow mb-4 text-paper/50">[ 06 ] &nbsp;Start a Project</p>
+        <h2 data-split class="display-l max-w-[14ch]">Tell us what you're <em class="accent capitalize">building</em></h2>
+      </div>
+      <div data-reveal>
+        <p class="lede mb-[clamp(24px,4vw,36px)] max-w-[44ch] !text-[1.05rem]">Three short steps, read by the person who would do the work. We reply within two working days.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="/contact" class="btn btn-solid">Start a project →</a>
+          <a href={`mailto:${settings.email}`} class="btn btn-ghost">{settings.email}</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

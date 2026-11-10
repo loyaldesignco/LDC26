@@ -1,0 +1,58 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getServices, getSettings } from "@/lib/sanity";
+import { src } from "@/lib/media";
+import type { Service } from "@/lib/types";
+
+const [services, settings] = await Promise.all([getServices(), getSettings()]);
+const href = (s: Service) => (s.slug ? `/services/${s.slug}` : `/work?f=${encodeURIComponent(s.workFilter ?? "All")}`);
+---
+
+<BaseLayout title="Services" description="Branding and identity, Webflow and digital, graphic design and strategy from Loyal Design Co, a New York studio est. 2011.">
+  <section class="gutter pb-[clamp(56px,8vw,110px)] pt-[clamp(104px,11vw,160px)]">
+    <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+      <span>[ Services ]</span>
+      <span>{services.length} disciplines · one team</span>
+    </div>
+    <h1 data-split class="display-page max-w-[14ch]">What we <em class="accent capitalize !text-[1.1em]">do</em></h1>
+    <p data-reveal class="lede mb-0 mt-[clamp(28px,4vw,48px)] max-w-[54ch]">Identity, web and graphic design, worked out strategy first and built by the same hands that drew it.</p>
+  </section>
+
+  <section class="gutter pb-[clamp(64px,8vw,110px)]">
+    <div data-svc-list class="bleed flex flex-col border-b border-paper/14">
+      {
+        services.map((s, i) => (
+          <a class="lp-svc-row" data-svc-row href={href(s)}>
+            <span class="mono text-paper/40">{String(i + 1).padStart(2, "0")}</span>
+            <h2 class="lp-svc-title m-0 text-[clamp(1.3rem,2.6vw,2.2rem)] font-bold leading-[1.02] tracking-[-0.03em]">{s.title}</h2>
+            <p class="lp-svc-desc mono m-0 text-[0.72rem] leading-[1.7] tracking-[0.05em] text-paper/50">{s.summary}</p>
+            <span class="lp-svc-thumb frame block aspect-[4/3] w-[clamp(160px,20vw,340px)] bg-ink" data-parallax data-depth="8">
+              {s.image && <img src={src(s.image, 700)} alt="" loading="lazy" class="size-full object-cover" />}
+            </span>
+            <span class="lp-svc-arrow block text-base" aria-hidden="true">→</span>
+          </a>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="gutter border-t border-paper/12 py-[clamp(72px,10vw,150px)]">
+    <p data-reveal class="eyebrow mb-[clamp(32px,5vw,64px)]">[ Every engagement ]</p>
+    <div class="border-b border-paper/16">
+      {
+        settings.process.map((p, i) => (
+          <div class="lp-cap" data-reveal>
+            <span class="lp-cap-rule" />
+            <span class="lp-cap-num mono text-paper/45">{String(i + 1).padStart(2, "0")}</span>
+            <h3 class="m-0 text-[clamp(1.3rem,2.4vw,2rem)] font-bold leading-[1.05] tracking-[-0.025em]">{p.title}</h3>
+            <p class="m-0 max-w-[52ch] leading-relaxed text-paper/60">{p.body}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div data-reveal class="mt-[clamp(40px,5vw,72px)] flex flex-wrap gap-3">
+      <a href="/contact" class="btn btn-solid">Start a project →</a>
+      <a href="/work" class="btn btn-ghost">See the work</a>
+    </div>
+  </section>
+</BaseLayout>

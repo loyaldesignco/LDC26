@@ -1,0 +1,162 @@
+---
+import "@fontsource/space-mono/400.css";
+import "@fontsource/space-mono/700.css";
+import "@fontsource/instrument-serif/400.css";
+import "@/styles/global.css";
+import SiteNav from "@/components/SiteNav.astro";
+import SiteFooter from "@/components/SiteFooter.astro";
+import { getServices, getSettings } from "@/lib/sanity";
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  /** "home" plays the counter preloader; every other page opens with the plum wipe. */
+  intro?: "home" | "page";
+}
+const [settings, services] = await Promise.all([getSettings(), getServices()]);
+const { title, description = settings.description, image, intro = "page" } = Astro.props;
+const fullTitle = title ? `${title} | ${settings.title}` : `${settings.title}, a New York design and Webflow studio`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
+// Adobe Fonts project (maf3dwv) that serves Neue Haas Grotesk Display. It must list the
+// production domain; anywhere it doesn't load, type falls back to Helvetica Neue.
+const typekit = (import.meta.env.PUBLIC_TYPEKIT_KIT as string | undefined) ?? "maf3dwv";
+
+const orgSchema = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: settings.title,
+  url: Astro.site?.toString(),
+  email: settings.email,
+  description: settings.description,
+  foundingDate: "2011",
+  logo: new URL("/brand/loyal-mark-black.svg", Astro.site).toString(),
+  address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
+  sameAs: settings.socials.map((s) => s.url),
+};
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <script is:inline>
+      // js: the underlay menu needs script. motion: hidden-until-revealed states,
+      // removed after 4s if the motion script never reports in.
+      var de = document.documentElement;
+      de.classList.add("js");
+      if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        de.classList.add("motion");
+        setTimeout(function () {
+          if (!window.__loyalMotion) de.classList.remove("motion");
+        }, 4000);
+      }
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin />
+    <link rel="preconnect" href="https://p.typekit.net" crossorigin />
+    <!-- Adobe Fonts JS embed. Adds wf-loading / wf-active / wf-inactive to <html>; gives up after 3s and leaves the fallbacks. -->
+    <script is:inline define:vars={{ kitId: typekit }}>
+      (function (d) {
+        var config = { kitId: kitId, scriptTimeout: 3000, async: true },
+          h = d.documentElement,
+          t = setTimeout(function () {
+            h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+          }, config.scriptTimeout),
+          tk = d.createElement("script"),
+          f = false,
+          s = d.getElementsByTagName("script")[0],
+          a;
+        h.className += " wf-loading";
+        tk.src = "https://use.typekit.net/" + config.kitId + ".js";
+        tk.async = true;
+        tk.onload = tk.onreadystatechange = function () {
+          a = this.readyState;
+          if (f || (a && a != "complete" && a != "loaded")) return;
+          f = true;
+          clearTimeout(t);
+          try {
+            Typekit.load(config);
+          } catch (e) {}
+        };
+        s.parentNode.insertBefore(tk, s);
+      })(document);
+    </script>
+    <slot name="head" />
+    <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+  </head>
+  <body>
+    <a href="#main" class="btn btn-solid sr-only z-[400] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
+
+    {
+      intro === "home" ? (
+        <div id="lp-preloader" class="fixed inset-0 z-[100] flex flex-col justify-between bg-ink p-[clamp(20px,4vw,56px)]" aria-hidden="true">
+          <div class="flex items-center justify-between gap-4">
+            <img src="/brand/loyal-logotype-white.svg" alt="" class="h-[22px] w-auto" />
+            <span class="mono text-paper/50">[ Loyal Design Co. — NYC ]</span>
+          </div>
+          <div class="flex items-end justify-between gap-4">
+            <span class="mono text-paper/50">[ Loading ]</span>
+            <span id="lp-counter" class="text-[clamp(4rem,12vw,9rem)] font-bold leading-[0.85] tabular-nums">000</span>
+          </div>
+        </div>
+      ) : (
+        <div id="lp-wipe-in" aria-hidden="true" />
+      )
+    }
+    <div id="lp-wipe" aria-hidden="true"></div>
+    <div id="lp-cursor" aria-hidden="true"></div>
+    <slot name="chrome" />
+
+    <SiteNav settings={settings} services={services} />
+
+    <div data-main>
+      <main id="main" tabindex="-1">
+        <slot />
+      </main>
+      <SiteFooter settings={settings} />
+    </div>
+
+    <a
+      data-totop
+      href="#main"
+      aria-label="Back to top"
+      class="fixed bottom-[clamp(16px,3vw,32px)] right-[clamp(16px,3vw,32px)] z-[55] flex size-11 items-center justify-center rounded-full border border-paper/25 bg-ink/35 font-mono text-sm backdrop-blur-md"
+      >↑</a
+    >
+
+    <!-- Refraction filter for the frosted glass surfaces -->
+    <svg class="hidden" aria-hidden="true">
+      <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
+        <feTurbulence type="fractalNoise" baseFrequency="0.001 0.005" numOctaves="1" seed="17" result="turbulence"></feTurbulence>
+        <feComponentTransfer in="turbulence" result="mapped">
+          <feFuncR type="gamma" amplitude="1" exponent="10" offset="0.5"></feFuncR>
+          <feFuncG type="gamma" amplitude="0" exponent="1" offset="0"></feFuncG>
+          <feFuncB type="gamma" amplitude="0" exponent="1" offset="0.5"></feFuncB>
+        </feComponentTransfer>
+        <feGaussianBlur in="turbulence" stdDeviation="3" result="softMap"></feGaussianBlur>
+        <feSpecularLighting in="softMap" surfaceScale="5" specularConstant="1" specularExponent="100" lighting-color="white" result="specLight">
+          <fePointLight x="-200" y="-200" z="300"></fePointLight>
+        </feSpecularLighting>
+        <feComposite in="specLight" operator="arithmetic" k1="0" k2="1" k3="1" k4="0" result="litImage"></feComposite>
+        <feDisplacementMap in="SourceGraphic" in2="softMap" scale="200" xChannelSelector="R" yChannelSelector="G"></feDisplacementMap>
+      </filter>
+    </svg>
+
+    <script>
+      import "@/scripts/motion";
+    </script>
+  </body>
+</html>

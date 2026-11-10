@@ -1,0 +1,27 @@
+---
+import { aspectOf, logoUrl } from "@/lib/media";
+import type { ClientLogo } from "@/lib/types";
+
+interface Props {
+  clients: ClientLogo[];
+}
+const { clients } = Astro.props;
+const items = await Promise.all(
+  clients.map(async (c) => ({ name: c.name, url: logoUrl(c.logo), ar: await aspectOf(c.logo), scale: c.scale ?? 1 })),
+);
+const row = items.filter((i) => i.url);
+---
+
+{
+  row.length > 0 && (
+    <div class="lp-marquee" data-marquee>
+      {[0, 1].map((copy) => (
+        <ul class="lp-marquee-track m-0 list-none p-0" data-marquee-track aria-hidden={copy === 1 ? "true" : undefined}>
+          {row.map((c) => (
+            <li class="client-logo" role="img" aria-label={c.name} style={`-webkit-mask-image:url('${c.url}');mask-image:url('${c.url}');--ar:${c.ar.toFixed(3)};--s:${c.scale}`} />
+          ))}
+        </ul>
+      ))}
+    </div>
+  )
+}

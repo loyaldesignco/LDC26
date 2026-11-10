@@ -1,0 +1,38 @@
+{
+  "name": "loyal-design",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "check": "astro check",
+    "seed": "tsx scripts/seed-sanity.ts",
+    "studio:dev": "cd studio && npm run dev"
+  },
+  "dependencies": {
+    "@fontsource/instrument-serif": "^5.3.0",
+    "@fontsource/space-mono": "^5.3.0",
+    "@portabletext/to-html": "^6.0.0",
+    "@portabletext/types": "^4.0.2",
+    "@sanity/client": "^8.15.1",
+    "@sanity/image-url": "^2.1.1",
+    "@tailwindcss/vite": "^4.3.5",
+    "astro": "^7.4.8",
+    "gsap": "^3.15.0",
+    "lenis": "^1.3.27",
+    "tailwindcss": "^4.3.5",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.12",
+    "@types/node": "^22.20.5",
+    "@types/three": "^0.170.0",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3"
+  },
+  "type": "module",
+  "private": true,
+  "engines": {
+    "node": ">=22.12"
+  }
+}

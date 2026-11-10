@@ -1,0 +1,130 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { byNewest, categoriesOf, getProjects, WORK_CATEGORIES } from "@/lib/sanity";
+import { logoUrl, src } from "@/lib/media";
+
+const projects = byNewest(await getProjects());
+const filters = ["All", ...WORK_CATEGORIES.filter((c) => projects.some((p) => categoriesOf(p).includes(c)))];
+const items = projects.map((p) => ({
+  slug: p.slug,
+  title: p.title,
+  year: p.launched ? String(p.launched) : "",
+  cats: categoriesOf(p),
+  img: src(p.cover, 1400),
+  logo: logoUrl(p.logo),
+  hasBody: Boolean(p.body?.length || p.gallery?.length),
+}));
+// Editorial rhythm: column span, ratio and offset repeat every eight cards.
+const RHYTHM = [
+  { col: "1 / span 7", ratio: "4/3", top: "0px" },
+  { col: "9 / span 4", ratio: "3/4", top: "clamp(40px,9vw,150px)" },
+  { col: "2 / span 4", ratio: "3/4", top: "clamp(20px,4vw,64px)" },
+  { col: "7 / span 6", ratio: "4/3", top: "0px" },
+  { col: "1 / span 5", ratio: "1/1", top: "clamp(30px,6vw,96px)" },
+  { col: "7 / span 5", ratio: "4/5", top: "0px" },
+  { col: "2 / span 6", ratio: "16/10", top: "0px" },
+  { col: "9 / span 4", ratio: "3/4", top: "clamp(50px,10vw,170px)" },
+];
+const rhythm = (i: number) => RHYTHM[i % RHYTHM.length];
+const sorts = [
+  ["newest", "Most Recent"],
+  ["oldest", "Oldest"],
+  ["az", "A–Z"],
+  ["za", "Z–A"],
+];
+---
+
+<BaseLayout title="Work" description="Branding, Webflow and product design by Loyal Design Co, from jiu jitsu gis for Kingz and Maeda to identities and websites for security firms and counseling practices.">
+  <section class="gutter pb-[clamp(80px,13vw,190px)] pt-[clamp(110px,12vw,170px)]" data-work data-rhythm={JSON.stringify(RHYTHM)}>
+    <p data-hud class="eyebrow mb-4">[ All Work ]</p>
+    <h1 data-split class="display-page mb-[clamp(32px,5vw,64px)] !text-[clamp(2.6rem,7vw,6rem)] !leading-[0.98]">Every <em class="accent capitalize">project</em>.</h1>
+
+    <div id="work-grid" data-hud class="lp-work-toolbar mb-[clamp(24px,4vw,48px)] flex scroll-mt-20 flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap gap-2.5" role="group" aria-label="Filter by discipline">
+        {filters.map((f) => <button type="button" class="pill pill-grad" data-filter={f} aria-pressed={f === "All" ? "true" : "false"}>{f === "All" ? "[ All ]" : f}</button>)}
+      </div>
+      <div class="flex items-center gap-2.5">
+        <div class="relative">
+          <button type="button" class="pill" data-sort-toggle aria-haspopup="listbox" aria-expanded="false" aria-controls="sort-list">
+            <span data-sort-label>[ Most Recent ]</span><span aria-hidden="true" class="inline-block text-[0.6rem] transition-transform duration-300" data-sort-chevron>▾</span>
+          </button>
+          <div id="sort-list" role="listbox" aria-label="Sort" hidden class="absolute right-0 top-[calc(100%+8px)] z-40 min-w-[190px] rounded-[14px] border border-paper/[0.18] bg-surface p-1.5 shadow-[0_20px_50px_-16px_rgba(0,0,0,0.7)]">
+            {
+              sorts.map(([k, label]) => (
+                <button type="button" role="option" data-sort={k} aria-selected={k === "newest" ? "true" : "false"} class="mono flex w-full cursor-pointer items-center justify-between gap-4 rounded-[9px] border-0 bg-transparent px-3.5 py-2.5 text-left text-paper/65 transition-colors hover:bg-paper/[0.08] hover:text-paper aria-selected:bg-paper/[0.06] aria-selected:text-paper">
+                  <span>{label}</span><span class="opacity-0 [[aria-selected=true]_&]:opacity-100">✓</span>
+                </button>
+              ))
+            }
+          </div>
+        </div>
+        <button type="button" class="pill pill-icon" data-view="gallery" aria-pressed="true" aria-label="Gallery view" title="Gallery view">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><rect x="0.5" y="0.5" width="5" height="5" stroke="currentColor"></rect><rect x="8.5" y="0.5" width="5" height="5" stroke="currentColor"></rect><rect x="0.5" y="8.5" width="5" height="5" stroke="currentColor"></rect><rect x="8.5" y="8.5" width="5" height="5" stroke="currentColor"></rect></svg>
+        </button>
+        <button type="button" class="pill pill-icon" data-view="list" aria-pressed="false" aria-label="List view" title="List view">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><line x1="0" y1="2.5" x2="14" y2="2.5" stroke="currentColor"></line><line x1="0" y1="7" x2="14" y2="7" stroke="currentColor"></line><line x1="0" y1="11.5" x2="14" y2="11.5" stroke="currentColor"></line></svg>
+        </button>
+      </div>
+    </div>
+
+    <p class="sr-only" aria-live="polite" data-results-status></p>
+
+    <!-- Gallery view -->
+    <div data-results="gallery" class="lp-ed-grid">
+      {
+        items.map((p, i) => (
+          <article class="lp-ed-card" data-item data-slug={p.slug} data-title={p.title} data-year={p.year} data-cats={p.cats.join("|")} style={`grid-column:${rhythm(i).col};margin-top:${rhythm(i).top}`}>
+            <a href={`/work/${p.slug}`} class="block">
+              <div class="frame rounded-[14px]" data-ratio style={`aspect-ratio:${rhythm(i).ratio}`}>
+                {p.img && <img class="lp-ed-base frame-media" src={p.img} alt="" loading={i < 2 ? "eager" : "lazy"} />}
+                <div class="lp-ed-wash pointer-events-none absolute inset-0" />
+                <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.72)_0%,rgba(10,10,10,0)_52%)]" />
+                {p.logo && <div class="lp-ed-logo pointer-events-none absolute left-1/2 top-1/2 h-[34%] w-[min(42%,190px)] -translate-x-1/2 -translate-y-1/2 bg-contain bg-center bg-no-repeat opacity-90 brightness-0 invert" style={`background-image:url('${p.logo}')`} aria-hidden="true" />}
+                <span class="lp-ed-cta mono pointer-events-none absolute bottom-[clamp(14px,2vw,22px)] left-[clamp(14px,2vw,22px)] inline-flex items-center gap-2 text-[0.66rem] tracking-[0.07em]">{p.hasBody ? "Explore case study" : "View project"} <span class="font-sans" aria-hidden="true">→</span></span>
+              </div>
+              <div class="mt-3.5 flex flex-wrap items-baseline justify-between gap-4 border-t border-paper/[0.18] pt-3.5">
+                <h2 class="lp-ed-title m-0 text-[clamp(1.2rem,1.8vw,1.5rem)] font-bold leading-[1.05] tracking-[-0.02em] transition-colors">{p.title}</h2>
+                {p.year && <span class="mono text-[0.64rem] tracking-[0.05em] text-paper/50">{p.year}</span>}
+              </div>
+            </a>
+            {p.cats.length > 0 && <div class="mt-3 flex flex-wrap gap-1.5">{p.cats.map((c) => <span class="tag">{c}</span>)}</div>}
+          </article>
+        ))
+      }
+    </div>
+
+    <!-- List view -->
+    <div data-results="list" data-worklist hidden>
+      <ol class="m-0 list-none p-0">
+        {
+          items.map((p, i) => (
+            <li data-item data-slug={p.slug} data-title={p.title} data-year={p.year} data-cats={p.cats.join("|")}>
+              <a href={`/work/${p.slug}`} class="lp-work-row" data-img={p.img}>
+                <span class="mono text-[0.64rem] tracking-[0.05em] text-paper/40" data-num>{String(i + 1).padStart(2, "0")}</span>
+                <span class="lp-work-title text-[clamp(1.4rem,2.6vw,2.2rem)] font-bold leading-[1.02] tracking-[-0.025em]">{p.title}</span>
+                <span class="mono text-[0.66rem] tracking-[0.05em] text-paper/50">[ {p.cats.join(" · ") || "Studio"} ]</span>
+                <span class="mono text-[0.66rem] tracking-[0.05em] text-paper/50">{p.year || "—"}</span>
+                <span class="lp-work-arrow text-[clamp(1.1rem,1.8vw,1.5rem)] leading-none" aria-hidden="true">↗</span>
+              </a>
+            </li>
+          ))
+        }
+      </ol>
+      <div class="border-t border-paper/[0.18]"></div>
+    </div>
+
+    <p data-empty hidden class="mono m-0 text-[0.72rem] text-paper/45">[ No projects in this category yet ]</p>
+  </section>
+
+  <div id="lp-float-card" aria-hidden="true">
+    <div data-float-img class="absolute inset-0 bg-cover bg-center"></div>
+    <div class="absolute inset-x-0 bottom-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.75),rgba(10,10,10,0))] px-4 py-3.5">
+      <span class="mono flex items-center gap-2 text-[0.62rem] tracking-[0.1em] text-paper/85"><span class="inline-block size-1.5 rounded-full bg-pink"></span><span data-float-label></span></span>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  import { initWorkIndex } from "@/scripts/work";
+  initWorkIndex();
+</script>

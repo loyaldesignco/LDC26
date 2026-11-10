@@ -1,0 +1,15 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Page not found">
+  <section class="gutter flex min-h-[80svh] flex-col justify-center pb-24 pt-[clamp(104px,11vw,160px)]">
+    <p data-hud class="eyebrow mb-6">[ 404 ]</p>
+    <h1 data-split class="display-page max-w-[16ch]">This page moved, or it never <em class="accent !text-[1.1em]">existed</em>.</h1>
+    <p data-reveal class="lede mb-0 mt-8 max-w-[44ch]">Older links from the previous site redirect automatically. If you followed one that didn't, the work is all here.</p>
+    <div data-reveal class="mt-10 flex flex-wrap gap-3">
+      <a href="/work" class="btn btn-solid">See the work →</a>
+      <a href="/" class="btn btn-ghost">Home page</a>
+    </div>
+  </section>
+</BaseLayout>

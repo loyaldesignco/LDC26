@@ -1,0 +1,185 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getSettings } from "@/lib/sanity";
+
+const settings = await getSettings();
+const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+const instagram = settings.socials.find((s) => /instagram/i.test(s.label));
+const channels = [
+  { label: "[ Email ]", value: settings.email, href: `mailto:${settings.email}` },
+  { label: "[ Studio ]", value: settings.location, href: undefined },
+  ...(instagram ? [{ label: "[ Instagram ]", value: "@" + instagram.url.replace(/\/$/, "").split("/").pop(), href: instagram.url }] : []),
+];
+const steps = [
+  {
+    label: "Step 01 / 03 — Contact",
+    heading: "Who are we talking to?",
+    blurb: "Three short steps. We read every inquiry and reply within two working days.",
+    next: "Continue →",
+  },
+  {
+    label: "Step 02 / 03 — Scope",
+    heading: "What kind of project?",
+    blurb: "A rough shape is enough. Budget ranges help us scope the first conversation honestly.",
+    next: "Continue →",
+  },
+  {
+    label: "Step 03 / 03 — Details",
+    heading: "Tell us the story.",
+    blurb: "Where the business is, where it needs to go, and what is in the way.",
+    next: "Send inquiry",
+  },
+];
+const done = {
+  label: "Received",
+  heading: "Thanks — we’ll be in touch.",
+  blurb: "Your inquiry is in. Expect a reply within two working days.",
+};
+const types = ["Branding & identity", "Webflow & digital", "Graphic design", "Strategy", "A few of these"];
+const budgets = ["$10–25k", "$25–50k", "$50–100k", "$100k+", "Not sure yet"];
+const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
+---
+
+<BaseLayout title="Start a project" description="Tell Loyal Design Co what you're building. Three short steps, read by the person who would do the work.">
+  <section class="gutter pb-[clamp(40px,6vw,72px)] pt-[clamp(104px,11vw,160px)]">
+    <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+      <span>[ Start a project ]</span>
+      <span>Replies within two working days</span>
+    </div>
+    <h1 data-split class="display-page mb-[clamp(28px,4vw,52px)] max-w-[16ch]">Tell us what you're <em class="accent !text-[1.1em]">building</em></h1>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-[clamp(20px,4vw,56px)] border-t border-paper/[0.18] pt-[clamp(24px,3vw,40px)]">
+      {
+        channels.map((c) => (
+          <div data-hud>
+            <p class="mono mb-3 text-[0.66rem] text-paper/45">{c.label}</p>
+            {c.href ? <a href={c.href} class="grad-hover text-[1.05rem] leading-normal">{c.value}</a> : <p class="m-0 text-[1.05rem] leading-normal">{c.value}</p>}
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section id="inquiry" class="gutter py-[clamp(48px,7vw,110px)]" data-steps={JSON.stringify(steps)} data-done={JSON.stringify(done)}>
+    <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[clamp(32px,6vw,88px)]">
+      <div class="top-[110px] md:sticky" aria-live="polite">
+        <p class="mono mb-6 text-[0.7rem] text-paper/55">[ <span data-step-label>{steps[0].label}</span> ]</p>
+        <h2 class="display-m max-w-[18ch] !leading-none" data-step-heading tabindex="-1">{steps[0].heading}</h2>
+        <p class="mt-6 max-w-[38ch] text-[0.94rem] leading-relaxed text-paper/55" data-step-blurb>{steps[0].blurb}</p>
+        <div class="mt-[clamp(28px,4vw,40px)] flex items-center gap-2" aria-hidden="true">
+          {steps.map((_, i) => <span class:list={["lp-step-dot", i === 0 && "is-on is-done"]} data-dot />)}
+        </div>
+      </div>
+
+      <form method="post" action={endpoint || undefined} data-endpoint={endpoint || ""} data-email={settings.email} class="grid gap-5" novalidate data-contact-form>
+        <fieldset data-step class="m-0 grid gap-5 border-0 p-0">
+          <legend class="sr-only">Contact</legend>
+          <label class="field"><span>Full name</span><input name="name" autocomplete="name" placeholder="Alex Morgan" required /></label>
+          <label class="field"><span>Company</span><input name="company" autocomplete="organization" placeholder="Harbor & Vine" /></label>
+          <label class="field"><span>Email</span><input name="email" type="email" autocomplete="email" placeholder="alex@company.com" required /></label>
+        </fieldset>
+        <fieldset data-step class="m-0 grid gap-5 border-0 p-0">
+          <legend class="sr-only">Scope</legend>
+          <label class="field"><span>Project type</span><select name="type">{types.map((o) => <option>{o}</option>)}</select></label>
+          <label class="field"><span>Budget range</span><select name="budget">{budgets.map((o) => <option>{o}</option>)}</select></label>
+          <label class="field"><span>Timeline</span><select name="timeline">{timelines.map((o) => <option>{o}</option>)}</select></label>
+        </fieldset>
+        <fieldset data-step class="m-0 grid gap-5 border-0 p-0">
+          <legend class="sr-only">Details</legend>
+          <label class="field"><span>About the project</span><textarea name="message" rows="5" placeholder="What are you building, for whom, and by when?" required></textarea></label>
+          <label class="field"><span>How did you find us?</span><input name="source" placeholder="Referral, Instagram, search…" /></label>
+        </fieldset>
+
+        <div class="mt-2 flex flex-wrap items-center gap-4">
+          <button type="button" data-back hidden class="cursor-pointer border border-paper/40 bg-transparent px-[26px] py-[15px] text-[0.82rem] font-semibold uppercase tracking-[0.04em] text-paper transition-colors hover:border-pink hover:text-pink">Back</button>
+          <button type="submit" class="btn btn-solid !px-[30px] !font-sans !text-[0.82rem] !font-semibold !tracking-[0.04em]" data-next>Send inquiry</button>
+          <span class="mono text-paper/40" data-progress></span>
+        </div>
+        <p class="m-0 text-[0.94rem] text-pink" role="alert" data-error></p>
+      </form>
+    </div>
+  </section>
+</BaseLayout>
+
+<script>
+  type Step = { label: string; heading: string; blurb: string; next: string };
+  const section = document.querySelector<HTMLElement>("#inquiry")!;
+  const form = section.querySelector<HTMLFormElement>("[data-contact-form]")!;
+  const steps: Step[] = JSON.parse(section.dataset.steps!);
+  const done: Omit<Step, "next"> = JSON.parse(section.dataset.done!);
+  const sets = Array.from(form.querySelectorAll<HTMLFieldSetElement>("[data-step]"));
+  const dots = Array.from(section.querySelectorAll<HTMLElement>("[data-dot]"));
+  const back = form.querySelector<HTMLButtonElement>("[data-back]")!;
+  const nextBtn = form.querySelector<HTMLButtonElement>("[data-next]")!;
+  const progress = form.querySelector<HTMLElement>("[data-progress]")!;
+  const error = form.querySelector<HTMLElement>("[data-error]")!;
+  const heading = section.querySelector<HTMLElement>("[data-step-heading]")!;
+  const q = (s: string) => section.querySelector<HTMLElement>(s)!;
+  let step = 0;
+  let sent = false;
+
+  function render(focus = false) {
+    const s = sent ? { ...done, next: "Send another" } : steps[step];
+    q("[data-step-label]").textContent = s.label;
+    heading.textContent = s.heading;
+    q("[data-step-blurb]").textContent = s.blurb;
+    sets.forEach((f, i) => (f.hidden = sent || i !== step));
+    dots.forEach((d, i) => {
+      d.classList.toggle("is-on", !sent && i === step);
+      d.classList.toggle("is-done", sent || i <= step);
+    });
+    back.hidden = sent || step === 0;
+    nextBtn.textContent = s.next;
+    progress.textContent = sent ? "" : `${step + 1} of ${steps.length}`;
+    error.textContent = "";
+    if (focus) (sent ? heading : sets[step].querySelector<HTMLElement>("input,select,textarea"))?.focus();
+  }
+
+  function valid(fs: HTMLFieldSetElement) {
+    const missing: string[] = [];
+    fs.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("[required]").forEach((el) => {
+      const ok = el.value.trim() !== "" && (el.type !== "email" || /.+@.+\..+/.test(el.value));
+      el.setAttribute("aria-invalid", String(!ok));
+      if (!ok) missing.push(el.closest("label")?.querySelector("span")?.textContent?.toLowerCase() ?? el.name);
+    });
+    if (missing.length) {
+      error.textContent = `Add your ${missing.join(" and ")} to continue.`;
+      fs.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+    }
+    return missing.length === 0;
+  }
+
+  async function send() {
+    const data = new FormData(form);
+    const endpoint = form.dataset.endpoint;
+    if (!endpoint) {
+      // No form backend configured: hand the message to the visitor's email app.
+      const lines = ["name", "company", "email", "type", "budget", "timeline", "source"].map((k) => `${k[0].toUpperCase() + k.slice(1)}: ${data.get(k) || "-"}`);
+      const subject = `New project: ${data.get("company") || data.get("name")}`;
+      location.href = `mailto:${form.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent([...lines, "", String(data.get("message"))].join("\n"))}`;
+      return true;
+    }
+    nextBtn.disabled = true;
+    nextBtn.textContent = "Sending…";
+    try {
+      const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
+      if (!res.ok) throw new Error(String(res.status));
+      return true;
+    } catch {
+      error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there.`;
+      nextBtn.textContent = steps[step].next;
+      return false;
+    } finally {
+      nextBtn.disabled = false;
+    }
+  }
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    if (sent) { form.reset(); sent = false; step = 0; return render(true); }
+    if (!valid(sets[step])) return;
+    if (step < steps.length - 1) { step += 1; return render(true); }
+    if (await send()) { sent = true; render(true); }
+  });
+  back.addEventListener("click", () => { step = Math.max(0, step - 1); render(true); });
+  render();
+</script>

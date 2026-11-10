@@ -1,0 +1,128 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { byNewest, categoriesOf, getProject, getProjects, renderBody } from "@/lib/sanity";
+import { logoUrl, src } from "@/lib/media";
+
+export async function getStaticPaths() {
+  const projects = byNewest(await getProjects());
+  return projects.map((p, i) => ({
+    params: { slug: p.slug },
+    props: { next: projects[(i + 1) % projects.length] },
+  }));
+}
+
+const { slug } = Astro.params;
+const { next } = Astro.props;
+const project = await getProject(slug!);
+if (!project) return Astro.redirect("/404");
+
+const cats = categoriesOf(project);
+const meta = `[ ${[...(cats.length ? cats : [project.industry]), project.launched].filter(Boolean).join(" · ")} ]`;
+const body = renderBody(project.body);
+const logo = logoUrl(project.logo);
+const gallery = project.gallery ?? [];
+// Pairs of 4:3 frames, then one 16:9 frame, repeating.
+const groups: { wide: boolean; items: typeof gallery }[] = [];
+for (let i = 0; i < gallery.length; ) {
+  const pair = gallery.slice(i, i + 2);
+  if (pair.length) groups.push({ wide: false, items: pair });
+  i += pair.length;
+  if (gallery[i]) groups.push({ wide: true, items: [gallery[i]] });
+  i += 1;
+}
+const facts = [
+  { label: "Client", value: project.client },
+  { label: "Industry", value: project.industry },
+  ...(project.facts ?? []),
+];
+---
+
+<BaseLayout title={project.title} description={project.summary} image={src(project.cover, 1200, 630) || undefined}>
+  <article>
+    <section class="gutter pt-[clamp(104px,11vw,160px)]">
+      <div class="mb-[clamp(20px,3vw,36px)]">
+        <a href="/work" class="mono grad-hover text-[0.7rem] font-bold text-paper/60">← All work</a>
+      </div>
+      <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
+        <span>[ Case Study ]</span>
+        <span>{meta}</span>
+      </div>
+      <div class="mb-[clamp(28px,4vw,56px)] flex items-end justify-between gap-[clamp(20px,4vw,56px)]">
+        <h1 data-split class="display-page">{project.title}</h1>
+        {logo && <div data-hud role="img" aria-label={`${project.client} logo`} class="mb-[0.35em] h-[clamp(36px,6vw,88px)] w-[clamp(110px,24vw,320px)] flex-none bg-contain bg-right-bottom bg-no-repeat opacity-90 brightness-0 invert" style={`background-image:url('${logo}')`} />}
+      </div>
+    </section>
+
+    <section class="gutter">
+      <div data-parallax="hero" class="frame aspect-video rounded-xl">
+        {project.cover && <img src={src(project.cover, 2400)} alt={project.cover.alt ?? project.title} fetchpriority="high" />}
+      </div>
+    </section>
+
+    <section class="gutter py-[clamp(56px,8vw,120px)]">
+      <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-start gap-[clamp(32px,6vw,88px)]">
+        <div>
+          <p data-reveal class="eyebrow mb-4">[ The Brief ]</p>
+          <h2 data-split class="display-m max-w-[22ch]">{project.statement ?? project.summary}</h2>
+        </div>
+        <div>
+          {
+            body ? (
+              <div data-reveal class="prose-loyal" set:html={body} />
+            ) : (
+              <p data-reveal class="prose-loyal m-0">{project.statement ? project.summary : "The full write-up for this project is on its way."}</p>
+            )
+          }
+          <dl data-reveal class="mt-7 grid gap-2.5 border-t border-paper/[0.18] pt-5">
+            {
+              facts.map((f) => (
+                <div class="mono flex justify-between gap-6 border-b border-paper/12 pb-2.5 text-[0.72rem] text-paper/60">
+                  <dt class="text-paper/40">{f.label}</dt>
+                  <dd class="m-0 text-right">{f.value}</dd>
+                </div>
+              ))
+            }
+          </dl>
+          <ul data-reveal class="m-0 mt-2.5 grid list-none gap-2.5 p-0" aria-label="Services">
+            {project.services.map((s) => <li class="mono border-b border-paper/12 pb-2.5 text-[0.72rem] text-paper/60">{s}</li>)}
+          </ul>
+          {project.url && <a href={project.url} class="btn btn-ghost mt-8" rel="noopener" target="_blank">Visit the live site ↗<span class="sr-only"> (opens in a new tab)</span></a>}
+        </div>
+      </div>
+    </section>
+
+    {
+      groups.length > 0 && (
+        <section class="gutter grid gap-[clamp(12px,1.5vw,24px)] pb-[clamp(56px,8vw,120px)]" aria-label="Gallery">
+          {groups.map((g) =>
+            g.wide ? (
+              <div data-reveal data-parallax class="frame aspect-video rounded-xl">
+                <img src={src(g.items[0], 2400)} alt={g.items[0].alt ?? ""} loading="lazy" />
+              </div>
+            ) : (
+              <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-[clamp(12px,1.5vw,24px)]">
+                {g.items.map((img) => (
+                  <div data-reveal data-parallax class="frame aspect-[4/3] rounded-xl">
+                    <img src={src(img, 1400)} alt={img.alt ?? ""} loading="lazy" />
+                  </div>
+                ))}
+              </div>
+            ),
+          )}
+        </section>
+      )
+    }
+  </article>
+
+  {
+    next && next.slug !== project.slug && (
+      <section class="lp-next gutter relative isolate overflow-hidden bg-surface py-[clamp(64px,9vw,130px)]">
+        {next.cover && <img class="lp-next-bg pointer-events-none absolute inset-0 -z-[2] size-full object-cover" src={src(next.cover, 2000)} alt="" loading="lazy" />}
+        <div class="lp-next-veil pointer-events-none absolute inset-0 -z-[1]" />
+        <div class="pointer-events-none absolute inset-0 -z-[1] bg-[linear-gradient(to_right,rgba(20,20,20,0.92)_0%,rgba(20,20,20,0.55)_55%,rgba(20,20,20,0.3)_100%)]" />
+        <p class="eyebrow mb-4 text-paper/50">[ Next Project ]</p>
+        <a href={`/work/${next.slug}`} data-roll-link class="inline-block text-[clamp(2.2rem,7vw,6.5rem)] font-bold leading-[0.95] tracking-[-0.04em]">{next.title} →</a>
+      </section>
+    )
+  }
+</BaseLayout>

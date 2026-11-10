@@ -1,0 +1,104 @@
+---
+import type { Service, SiteSettings } from "@/lib/types";
+
+interface Props {
+  settings: SiteSettings;
+  services: Service[];
+}
+const { settings, services } = Astro.props;
+const serviceHref = (s: Service) => (s.slug ? `/services/${s.slug}` : `/work?f=${encodeURIComponent(s.workFilter ?? "All")}`);
+const path = Astro.url.pathname;
+const current = (href: string) => (href === "/" ? path === "/" : path.startsWith(href)) ? "page" : undefined;
+---
+
+<header id="lp-header" class="gutter fixed inset-x-0 top-0 z-[60] flex h-16 items-center justify-between gap-6">
+  <a href="/" class="flex items-center" aria-label="Loyal Design Co, home">
+    <img src="/brand/loyal-logotype-white.svg" alt="" class="h-[18px] w-auto" width="94" height="18" />
+  </a>
+  <div class="flex items-center gap-[clamp(16px,2.6vw,32px)]">
+    <a href="/contact" data-header-meta class="mono grad-hover text-[0.72rem] font-bold text-paper max-sm:hidden">Start a project →</a>
+    <span data-header-meta class="h-4 w-px bg-paper/25 max-sm:hidden" aria-hidden="true"></span>
+    <button
+      type="button"
+      data-underlay-nav-toggle
+      aria-expanded="false"
+      aria-controls="site-menu"
+      aria-label="Open menu"
+      class="flex cursor-pointer items-center gap-3 border-0 bg-transparent p-0 font-mono text-[0.78rem] font-bold uppercase tracking-[0.06em] text-paper transition-colors hover:text-pink"
+    >
+      <span class="flex h-[1em] flex-col items-end overflow-hidden leading-none">
+        <span class="underlay-nav__toggle-label block leading-none">Menu.</span>
+        <span class="underlay-nav__toggle-label block leading-none" aria-hidden="true">Close.</span>
+      </span>
+      <span class="flex w-[26px] flex-col gap-[5px]" aria-hidden="true">
+        <span class="underlay-nav__toggle-bar block h-0.5 w-full bg-current"></span>
+        <span class="underlay-nav__toggle-bar block h-0.5 w-full bg-current"></span>
+      </span>
+    </button>
+  </div>
+</header>
+
+<nav id="site-menu" data-underlay-nav-menu aria-label="Site" inert>
+  <div class="flex h-full flex-col justify-between gap-8 overflow-auto px-8 pb-8 pt-28">
+    <ul class="m-0 flex list-none flex-col p-0">
+      <li data-reveal-l><a href="/" class="menu-link" data-roll aria-current={current("/")}>Home.</a></li>
+      <li data-reveal-l><a href="/work" class="menu-link" data-roll aria-current={current("/work")}>Work.</a></li>
+      <li data-reveal-l>
+        <a href="/services" class="menu-link" data-roll aria-current={current("/services")}>Services.</a>
+        <ul class="m-0 mb-2 mt-1 flex list-none flex-wrap gap-x-6 gap-y-2 p-0">
+          {
+            services.map((s) => (
+              <li data-reveal-l>
+                <a href={serviceHref(s)} class="menu-sub grad-hover">{s.title}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </li>
+      <li data-reveal-l><a href="/about" class="menu-link" data-roll aria-current={current("/about")}>About.</a></li>
+      <li data-reveal-l><a href="/contact" class="menu-link" data-roll aria-current={current("/contact")}>Contact.</a></li>
+    </ul>
+
+    <div class="flex w-full flex-col gap-6">
+      <img src="/brand/loyal-globe-gradient.svg" alt="" aria-hidden="true" class="h-auto w-1/4" width="62" height="24" />
+      <div class="relative flex w-full gap-8 pt-6">
+        <div class="underlay-nav__bottom-border absolute inset-x-0 top-0 h-px origin-left bg-current opacity-15"></div>
+        <div class="flex flex-1 flex-col gap-4">
+          <div data-reveal-s><span class="mono text-paper/40">[ Socials ]</span></div>
+          <ul class="m-0 flex list-none flex-col gap-3 p-0">
+            {
+              settings.socials.map((s) => (
+                <li data-reveal-s>
+                  <a href={s.url} class="menu-sub grad-hover text-paper/75" rel="me noopener" target="_blank">{s.label}</a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+        <div class="flex flex-1 flex-col gap-4">
+          <div data-reveal-s><span class="mono text-paper/40">[ Contact ]</span></div>
+          <ul class="m-0 flex list-none flex-col gap-3 p-0">
+            <li data-reveal-s><a href={`mailto:${settings.email}`} class="menu-sub grad-hover text-paper/75">{settings.email}</a></li>
+            <li data-reveal-s><a href="/contact" class="menu-sub grad-hover text-paper/75">Start a project ↗</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- Hairline frame with animated corners that hugs the page while the menu is open. Click to close. -->
+<div data-underlay-nav-overlay aria-hidden="true">
+  <div class="underlay-nav__dark absolute inset-0 bg-black/40 opacity-0"></div>
+  <div class="absolute inset-0 flex flex-col justify-between">
+    <div class="underlay-nav__border-row flex flex-col items-end">
+      <div class="h-4 w-full" style="background:linear-gradient(rgba(249,246,240,0.18),rgba(249,246,240,0.18)) left bottom / calc(100% - 2em) 1px no-repeat,#141414"></div>
+      <div class="underlay-nav__corner size-8 origin-top-right" style="background-image:radial-gradient(circle farthest-side at 0 100%,rgba(20,20,20,0) calc(99% - 1px),rgba(249,246,240,0.18) calc(99% - 1px),rgba(249,246,240,0.18) 99%,#141414 99%)"></div>
+    </div>
+    <div class="flex flex-1 justify-end"><div class="w-px bg-paper/[0.18]"></div></div>
+    <div class="underlay-nav__border-row flex flex-col items-end">
+      <div class="underlay-nav__corner size-8 origin-bottom-right" style="background-image:radial-gradient(circle farthest-side at 0 0,rgba(20,20,20,0) calc(99% - 1px),rgba(249,246,240,0.18) calc(99% - 1px),rgba(249,246,240,0.18) 99%,#141414 99%)"></div>
+      <div class="h-4 w-full" style="background:linear-gradient(rgba(249,246,240,0.18),rgba(249,246,240,0.18)) left top / calc(100% - 2em) 1px no-repeat,#141414"></div>
+    </div>
+  </div>
+</div>

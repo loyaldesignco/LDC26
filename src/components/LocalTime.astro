@@ -1,0 +1,27 @@
+---
+/** Live clock for the studio's time zone. Renders a sensible static value without JS. */
+interface Props {
+  timezone: string;
+  suffix?: string;
+}
+const { timezone, suffix = "" } = Astro.props;
+---
+
+<span data-clock data-tz={timezone} data-suffix={suffix}>Eastern Time{suffix}</span>
+
+<script>
+  function tick() {
+    document.querySelectorAll<HTMLElement>("[data-clock]").forEach((el) => {
+      const tz = el.dataset.tz || "America/New_York";
+      const time = new Intl.DateTimeFormat("en-US", {
+        timeZone: tz,
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+      }).format(new Date());
+      el.textContent = time.replace(" AM", " am").replace(" PM", " pm") + (el.dataset.suffix ?? "");
+    });
+  }
+  tick();
+  setInterval(tick, 20_000);
+</script>
