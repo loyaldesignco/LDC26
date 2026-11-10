@@ -51,6 +51,7 @@ Projects and services are drag-to-order in the Studio.
 - **Copy to confirm:** Webflow FAQ prices ($18k, $30k to $60k), the budget ranges on /contact, and the About timeline came from the design draft.
 - **Bauhaus Desk Display** (menu face) is self-hosted: check the licence covers web use.
 - **Years** for Fighters Market and Brandon James Construction aren't recorded, so they sort last.
+- **New domains:** add each one (including loyal.design once it points at Vercel) to the Sanity project's CORS origins, or the hero slideshow falls back to its first image.
 - Old Adobe Portfolio URLs (`/kingz-balistico-design` etc.) 301 to `/work/<slug>`; see `astro.config.mjs`.
 
 ## Structure

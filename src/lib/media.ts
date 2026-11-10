@@ -37,3 +37,25 @@ export function logoUrl(image: SanityImage | null | undefined): string | null {
 
 /** Shorthand for the sizes the layouts actually use. */
 export const src = (image: SanityImage | null | undefined, width = 1600, height?: number) => imageUrl(image, width, height) ?? "";
+
+const maskCache = new Map<string, string>();
+
+/**
+ * Logo URL for CSS masks. Masks are fetched with CORS, and the Sanity CDN only answers
+ * origins on the project's CORS list, so remote logos are inlined as data URIs at build time.
+ */
+export async function logoMaskUrl(image: SanityImage | null | undefined): Promise<string | null> {
+  const url = logoUrl(image);
+  if (!url || url.startsWith("/") || url.startsWith("data:")) return url;
+  if (maskCache.has(url)) return maskCache.get(url)!;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return url;
+    const type = res.headers.get("content-type") ?? "image/png";
+    const data = `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString("base64")}`;
+    maskCache.set(url, data);
+    return data;
+  } catch {
+    return url;
+  }
+}

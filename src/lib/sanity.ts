@@ -5,7 +5,8 @@ import type { PortableTextBlock } from "@portabletext/types";
 import * as fallback from "@/data/fallback";
 import type { Post, Project, SanityImage, Service, SiteSettings, Testimonial } from "./types";
 
-const projectId = import.meta.env.PUBLIC_SANITY_PROJECT_ID as string | undefined;
+// Sanity project "Loyal". Set PUBLIC_SANITY_PROJECT_ID to an empty string to build from src/data/fallback.ts instead.
+const projectId = (import.meta.env.PUBLIC_SANITY_PROJECT_ID as string | undefined) ?? "9xn8x41p";
 const dataset = (import.meta.env.PUBLIC_SANITY_DATASET as string | undefined) ?? "production";
 const apiVersion = (import.meta.env.PUBLIC_SANITY_API_VERSION as string | undefined) ?? "2026-11-01";
 const token = import.meta.env.SANITY_API_READ_TOKEN as string | undefined;

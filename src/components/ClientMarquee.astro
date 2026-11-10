@@ -1,5 +1,5 @@
 ---
-import { aspectOf, logoUrl } from "@/lib/media";
+import { aspectOf, logoMaskUrl } from "@/lib/media";
 import type { ClientLogo } from "@/lib/types";
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 const { clients } = Astro.props;
 const items = await Promise.all(
-  clients.map(async (c) => ({ name: c.name, url: logoUrl(c.logo), ar: await aspectOf(c.logo), scale: c.scale ?? 1 })),
+  clients.map(async (c) => ({ name: c.name, url: await logoMaskUrl(c.logo), ar: await aspectOf(c.logo), scale: c.scale ?? 1 })),
 );
 const row = items.filter((i) => i.url);
 ---

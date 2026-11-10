@@ -35,7 +35,7 @@
 
   --sans: "neue-haas-grotesk-display", "Neue Haas Grotesk Display Pro", "neue-haas-grotesk-text", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --serif: "Instrument Serif", Georgia, serif;
+  --serif: "marlide-display-variable", "Marlide Display Variable", "Instrument Serif", Georgia, serif;
   --menu: "Bauhaus Desk Display", var(--sans);
 }
 @media (max-width: 767px) {

@@ -3,14 +3,14 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import ClientMarquee from "@/components/ClientMarquee.astro";
 import LocalTime from "@/components/LocalTime.astro";
 import { categoriesOf, getProjects, getServices, getSettings, WORK_CATEGORIES } from "@/lib/sanity";
-import { logoUrl, src } from "@/lib/media";
+import { logoMaskUrl, src } from "@/lib/media";
 import type { Service } from "@/lib/types";
 
 const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
 
 const slides = settings.heroSlides.filter((s) => s.image);
 const first = slides[0];
-const heroMeta = slides.map((s) => ({ label: s.label, href: s.href ?? "/work", logo: logoUrl(s.logo) ?? "" }));
+const heroMeta = await Promise.all(slides.map(async (s) => ({ label: s.label, href: s.href ?? "/work", logo: (await logoMaskUrl(s.logo)) ?? "" })));
 const counts = WORK_CATEGORIES.map((c) => ({ label: c, n: projects.filter((p) => categoriesOf(p).includes(c)).length })).filter((c) => c.n > 0);
 const serviceHref = (s: Service) => (s.slug ? `/services/${s.slug}` : `/work?f=${encodeURIComponent(s.workFilter ?? "All")}`);
 const abbr: Record<string, string> = { Instagram: "IG", Behance: "BE", Dribbble: "DR", LinkedIn: "LI", Facebook: "FB", X: "X" };
