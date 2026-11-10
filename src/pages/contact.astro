@@ -3,7 +3,8 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getSettings } from "@/lib/sanity";
 
 const settings = await getSettings();
-const endpoint = import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined;
+// Formspree form "loyal.design contact". Set PUBLIC_FORM_ENDPOINT to an empty string to fall back to the visitor's email app.
+const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? "https://formspree.io/f/mzerprgn";
 const instagram = settings.socials.find((s) => /instagram/i.test(s.label));
 const channels = [
   { label: "[ Email ]", value: settings.email, href: `mailto:${settings.email}` },
