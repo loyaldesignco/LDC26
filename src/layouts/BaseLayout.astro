@@ -89,9 +89,33 @@ const orgSchema = {
     <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
     <link rel="preconnect" href="https://use.typekit.net" crossorigin />
     <link rel="preconnect" href="https://p.typekit.net" crossorigin />
-    <!-- Adobe Fonts CSS embed, loaded without blocking render; Helvetica/Georgia stand in until it lands. -->
-    <link rel="preload" as="style" href={`https://use.typekit.net/${typekit}.css`} onload="this.onload=null;this.rel='stylesheet'" />
-    <noscript><link rel="stylesheet" href={`https://use.typekit.net/${typekit}.css`} /></noscript>
+    <!-- Adobe Fonts JS embed (maf3dwv is a JS kit; it has no CSS endpoint). Adds wf-loading / wf-active / wf-inactive to <html>; gives up after 3s and leaves the fallbacks. -->
+    <script is:inline define:vars={{ kitId: typekit }}>
+      (function (d) {
+        var config = { kitId: kitId, scriptTimeout: 3000, async: true },
+          h = d.documentElement,
+          t = setTimeout(function () {
+            h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
+          }, config.scriptTimeout),
+          tk = d.createElement("script"),
+          f = false,
+          s = d.getElementsByTagName("script")[0],
+          a;
+        h.className += " wf-loading";
+        tk.src = "https://use.typekit.net/" + config.kitId + ".js";
+        tk.async = true;
+        tk.onload = tk.onreadystatechange = function () {
+          a = this.readyState;
+          if (f || (a && a != "complete" && a != "loaded")) return;
+          f = true;
+          clearTimeout(t);
+          try {
+            Typekit.load(config);
+          } catch (e) {}
+        };
+        s.parentNode.insertBefore(tk, s);
+      })(document);
+    </script>
     <slot name="head" />
     <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
   </head>

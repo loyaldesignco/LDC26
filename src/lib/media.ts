@@ -28,11 +28,27 @@ export async function aspectOf(image: SanityImage | null | undefined, fallback =
   }
 }
 
-/** URL for a logo used as a CSS mask: keep SVGs as-is, ask Sanity for PNG so alpha survives. */
+/**
+ * Logos are used as CSS masks, which the browser fetches with CORS. Rather than depend on the
+ * Sanity CDN's CORS list (or bloat the HTML with data URIs), each Sanity logo is copied to
+ * /logos/<asset>.webp at build time by src/pages/logos/[file].ts and served same-origin.
+ */
+export function logoFile(image: SanityImage | null | undefined): string | null {
+  const ref = image?.asset?._ref;
+  return ref ? `${ref.replace(/^image-/, "").replace(/-[a-z0-9]+$/, "")}.webp` : null;
+}
+
+/** Remote source the build copies a logo from: 400px WebP keeps the alpha the mask needs. */
+export function logoSource(image: SanityImage | null | undefined): string | null {
+  return imageUrl(image, 400)?.replace("auto=format", "fm=webp").replace(/q=\d+/, "q=80") ?? null;
+}
+
+/** URL for a logo used as a CSS mask: local files as-is, Sanity logos via their same-origin copy. */
 export function logoUrl(image: SanityImage | null | undefined): string | null {
   if (!image) return null;
   if (image.url) return image.url;
-  return imageUrl(image, 600)?.replace("auto=format", "fm=png") ?? null;
+  const file = logoFile(image);
+  return file ? `/logos/${file}` : null;
 }
 
 /** Shorthand for the sizes the layouts actually use. */
@@ -53,24 +69,7 @@ export function srcset(image: SanityImage | null | undefined, max = 2400): strin
   return ws.map((w) => `${imageUrl(image, w)} ${w}w`).join(", ");
 }
 
-const maskCache = new Map<string, string>();
-
-/**
- * Logo URL for CSS masks. Masks are fetched with CORS, and the Sanity CDN only answers
- * origins on the project's CORS list, so remote logos are inlined as data URIs at build time.
- */
+/** Kept for existing callers; logos are now same-origin files, so nothing is inlined. */
 export async function logoMaskUrl(image: SanityImage | null | undefined): Promise<string | null> {
-  const url = logoUrl(image);
-  if (!url || url.startsWith("/") || url.startsWith("data:")) return url;
-  if (maskCache.has(url)) return maskCache.get(url)!;
-  try {
-    const res = await fetch(url);
-    if (!res.ok) return url;
-    const type = res.headers.get("content-type") ?? "image/png";
-    const data = `data:${type};base64,${Buffer.from(await res.arrayBuffer()).toString("base64")}`;
-    maskCache.set(url, data);
-    return data;
-  } catch {
-    return url;
-  }
+  return logoUrl(image);
 }

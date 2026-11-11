@@ -146,7 +146,7 @@
       ]
     },
     {
-      "source": "/(brand|fonts)/(.*)",
+      "source": "/(brand|fonts|logos)/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
