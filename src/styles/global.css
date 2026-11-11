@@ -28,8 +28,19 @@
 }
 @font-face {
   font-family: "Neue Haas Fallback";
-  src: local("Arial"), local("Helvetica"), local("Liberation Sans");
-  size-adjust: 93.3%;
+  src: local("Arial"), local("ArialMT"), local("Liberation Sans"), local("Helvetica");
+  font-weight: 100 599;
+  size-adjust: 93.1%;
+  ascent-override: 93%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+/* Bold gets its own real face: a synthesized bold from the regular is too narrow and rewraps headlines. */
+@font-face {
+  font-family: "Neue Haas Fallback";
+  src: local("Arial Bold"), local("Arial-BoldMT"), local("Liberation Sans Bold"), local("Helvetica Bold");
+  font-weight: 600 900;
+  size-adjust: 93.4%;
   ascent-override: 93%;
   descent-override: 25%;
   line-gap-override: 0%;
