@@ -540,6 +540,22 @@ details.lp-acc:hover { background: rgb(249 246 240 / 0.03); }
 .lp-w-o { display: inline-block; overflow: hidden; vertical-align: bottom; padding: 0.05em 0.06em 0.22em; margin: -0.05em -0.06em -0.22em; }
 .lp-w { display: inline-block; transform-origin: 0% 100%; }
 .motion .lp-w { transform: translateY(115%) rotate(5deg); }
+/* Letter-by-letter headlines (data-letters): words stay put, letters fade in out of order with scroll. */
+.lp-l { display: inline-block; }
+.motion [data-letters] .lp-w { transform: none; }
+.motion [data-letters] .lp-l { opacity: 0; }
+
+/* Featured work: each card sticks a little lower than the last, and shrinks back as the next slides over it. */
+.lp-cases { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 28px); }
+.lp-case { position: sticky; top: calc(clamp(72px, 7vw, 104px) + var(--i) * clamp(10px, 1.1vw, 18px)); height: clamp(440px, 74svh, 880px); }
+.lp-case-card { display: block; height: 100%; border-radius: clamp(14px, 1.6vw, 24px); transform-origin: 50% 0%; color: var(--paper); }
+.lp-case-wash { position: absolute; inset: 0; z-index: 1; background: linear-gradient(to top, rgb(10 10 10 / 0.72) 0%, rgb(10 10 10 / 0) 46%), linear-gradient(to bottom, rgb(10 10 10 / 0.45) 0%, rgb(10 10 10 / 0) 22%); }
+.lp-case-shade { position: absolute; inset: 0; z-index: 2; background: var(--ink); opacity: 0; pointer-events: none; }
+.lp-case-top { position: absolute; inset: 0 0 auto; z-index: 3; display: flex; justify-content: space-between; gap: 1rem; padding: clamp(16px, 2vw, 28px); color: rgb(249 246 240 / 0.85); }
+.lp-case-title { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; padding: clamp(18px, 2.4vw, 36px); font-size: clamp(2rem, 6.2vw, 6.4rem); font-weight: 700; line-height: 0.9; letter-spacing: -0.045em; }
+.lp-case-arrow { font-size: 0.4em; line-height: 1; transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+.lp-case-card:hover .lp-case-arrow, .lp-case-card:focus-visible .lp-case-arrow { transform: translateX(0.3em); }
+@media (prefers-reduced-motion: reduce) { .lp-case { position: relative; top: auto; } }
 .motion [data-reveal] { opacity: 0; transform: translateY(56px); }
 .motion [data-hud]:not(#top [data-hud]) { opacity: 0; }
 

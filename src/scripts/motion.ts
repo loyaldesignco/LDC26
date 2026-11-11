@@ -79,6 +79,7 @@ function init() {
     ...splits.filter((el) => !isIntro(el)).map((el) => () => splitWords(el)),
     reveals,
     serviceStack,
+    caseStack,
     marquee,
     parallax,
     heroSlideshow,
@@ -111,7 +112,8 @@ function fontsSettled(cap: number): Promise<void> {
 /* ---------------------------------------------------------------- scroll */
 
 function smoothScroll() {
-  lenis = new Lenis({ duration: 1.7, easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), smoothWheel: true, wheelMultiplier: 0.9 });
+  // Heavier, longer glide: each wheel tick moves less (0.7) and the page eases toward it slowly (lerp 0.07).
+  lenis = new Lenis({ lerp: 0.07, wheelMultiplier: 0.7, smoothWheel: true });
   window.__lenis = lenis;
   lenis.on("scroll", ScrollTrigger.update);
   gsap.ticker.add((t) => lenis?.raf(t * 1000));
@@ -384,7 +386,27 @@ function splitWords(el: HTMLElement) {
       i.append(node);
     }
   });
+  if (el.hasAttribute("data-letters")) splitLetters(el);
   el.classList.add("is-split");
+}
+
+/** Breaks each word of a data-letters headline into letters; the heading keeps its text as its accessible name. */
+function splitLetters(el: HTMLElement) {
+  el.setAttribute("aria-label", el.textContent!.replace(/\s+/g, " ").trim());
+  $$(".lp-w-o", el).forEach((o) => o.setAttribute("aria-hidden", "true"));
+  const walk = (node: Node) => {
+    if (node.nodeType === 3) {
+      const frag = document.createDocumentFragment();
+      for (const ch of node.textContent!) {
+        const l = document.createElement("span");
+        l.className = "lp-l";
+        l.textContent = ch;
+        frag.append(l);
+      }
+      node.parentNode!.replaceChild(frag, node);
+    } else Array.from(node.childNodes).forEach(walk);
+  };
+  $$(".lp-w", el).forEach(walk);
 }
 
 const isIntro = (el: Element) => Boolean(el.closest("#top")) || (el.tagName === "H1" && !document.getElementById("top"));
@@ -434,10 +456,28 @@ function observe(el: Element, fn: (el: Element, instant: boolean) => void) {
   io.observe(el);
 }
 
+/** True when an element starts below the opening view; only those get scroll-linked reveals. */
+const belowFold = (el: Element) => el.getBoundingClientRect().top > innerHeight * 0.92;
+
+/** Ties a reveal to the scrollbar: it plays forward as the element rises into view and rewinds on the way back. */
+function scrubbed(el: Element, start = "top 92%", end = "top 55%") {
+  (el as HTMLElement).dataset.scrubbed = "";
+  return { trigger: el, start, end, scrub: 0.8 };
+}
+
 function reveals() {
   $$("[data-split]").forEach((el) => {
     if (isIntro(el)) return;
-    observe(el, (t, now) => gsap.to($$(".lp-w", t), { y: 0, rotate: 0, duration: now ? 0 : 1.4, ease: "expo.out", stagger: now ? 0 : 0.05 }));
+    if (el.hasAttribute("data-letters")) {
+      const letters = $$(".lp-l", el);
+      if (belowFold(el))
+        gsap.fromTo(letters, { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, ease: "power1.out", stagger: { amount: 0.9, from: "random" }, scrollTrigger: scrubbed(el, "top 95%", "top 45%") });
+      else observe(el, (_, now) => gsap.to(letters, { opacity: 1, duration: now ? 0 : 1, ease: "power2.out", stagger: now ? 0 : { amount: 0.6, from: "random" } }));
+      return;
+    }
+    const words = $$(".lp-w", el);
+    if (belowFold(el)) gsap.to(words, { y: 0, rotate: 0, ease: "power2.out", stagger: 0.12, scrollTrigger: scrubbed(el) });
+    else observe(el, (t, now) => gsap.to($$(".lp-w", t), { y: 0, rotate: 0, duration: now ? 0 : 1.4, ease: "expo.out", stagger: now ? 0 : 0.05 }));
   });
 }
 
@@ -445,7 +485,9 @@ function reveals() {
 function blockReveals() {
   $$("[data-reveal]").forEach((el) => {
     if (el.closest("#top")) return;
-    observe(el, (t, now) => gsap.to(t, { opacity: 1, y: 0, duration: now ? 0 : 1.6, ease: "expo.out" }));
+    // Content in the opening view fades in on load (it may be the LCP); everything below rides the scroll.
+    if (belowFold(el)) gsap.fromTo(el, { opacity: 0, y: 56 }, { opacity: 1, y: 0, ease: "power1.out", scrollTrigger: scrubbed(el, "top 98%", "top 72%") });
+    else observe(el, (t, now) => gsap.to(t, { opacity: 1, y: 0, duration: now ? 0 : 1.6, ease: "expo.out" }));
   });
 }
 
@@ -454,11 +496,12 @@ function revealFailsafe() {
   setTimeout(() => {
     const vh = innerHeight;
     const inView = (el: Element) => { const r = el.getBoundingClientRect(); return r.top < vh * 0.85 && r.bottom > 0; };
-    $$("[data-split]").filter(inView).forEach((el) => {
+    const live = (el: Element) => inView(el) && !(el as HTMLElement).hasAttribute("data-scrubbed");
+    $$("[data-split]").filter(live).forEach((el) => {
       const w = $(".lp-w", el);
       if (w && Math.abs(gsap.getProperty(w, "y") as number) > 2) gsap.to($$(".lp-w", el), { y: 0, rotate: 0, duration: 0.7, ease: "expo.out", stagger: 0.02, overwrite: true });
     });
-    $$("[data-reveal], [data-hud]").filter((el) => inView(el) && parseFloat(getComputedStyle(el).opacity) < 0.9)
+    $$("[data-reveal], [data-hud]").filter((el) => live(el) && parseFloat(getComputedStyle(el).opacity) < 0.9)
       .forEach((el) => gsap.to(el, { opacity: 1, y: 0, duration: 0.7, ease: "expo.out", overwrite: true }));
   }, 3500);
 }
@@ -484,6 +527,18 @@ function serviceStack() {
 }
 
 /** Logos drift left while scrolling down, right while scrolling up. */
+/** Featured work: as each sticky card is covered by the next, it shrinks back and dims. */
+function caseStack() {
+  const cases = $$("[data-case]");
+  cases.slice(0, -1).forEach((c, i) => {
+    const card = $("[data-case-card]", c);
+    const shade = $("[data-case-shade]", c);
+    gsap.timeline({ scrollTrigger: { trigger: cases[i + 1], start: "top bottom", end: "top 30%", scrub: 0.8 } })
+      .to(card, { scale: 0.9, ease: "none" }, 0)
+      .to(shade, { opacity: 0.55, ease: "none" }, 0);
+  });
+}
+
 function marquee() {
   const tracks = $$("[data-marquee-track]");
   if (!tracks.length) return;
