@@ -8,72 +8,122 @@
     {
       "source": "/home",
       "destination": "/",
-      "permanent": true
+      "statusCode": 301
     },
     {
-      "source": "/maeda-akashio",
-      "destination": "/work/maeda-akashio",
-      "permanent": true
-    },
-    {
-      "source": "/guarded-globe",
-      "destination": "/work/guarded-globe",
-      "permanent": true
-    },
-    {
-      "source": "/all-roads-counseling",
-      "destination": "/work/all-roads-counseling",
-      "permanent": true
-    },
-    {
-      "source": "/shellproof-security",
-      "destination": "/work/shellproof-security",
-      "permanent": true
-    },
-    {
-      "source": "/maeda-red-label",
-      "destination": "/work/maeda-red-label",
-      "permanent": true
+      "source": "/2019-world-jiu-jitsu-championship-event-shirt",
+      "destination": "/work/fighters-market-ibjjf",
+      "statusCode": 301
     },
     {
       "source": "/2022-choke-republic-collection",
       "destination": "/work/choke-republic-2022",
-      "permanent": true
+      "statusCode": 301
     },
     {
-      "source": "/love-bridal-branding",
-      "destination": "/work/love-bridal",
-      "permanent": true
+      "source": "/all-roads-counseling",
+      "destination": "/work/all-roads-counseling",
+      "statusCode": 301
     },
     {
       "source": "/bgd-enterprises",
       "destination": "/work/bgd-enterprises",
-      "permanent": true
+      "statusCode": 301
+    },
+    {
+      "source": "/brandon-james-construction",
+      "destination": "/work/brandon-james-construction",
+      "statusCode": 301
     },
     {
       "source": "/choke-republic-design-tee-design",
       "destination": "/work/choke-republic-tee",
-      "permanent": true
+      "statusCode": 301
     },
     {
-      "source": "/kingz-balistico-design",
-      "destination": "/work/kingz-balistico",
-      "permanent": true
+      "source": "/christopher-d-connors-website",
+      "destination": "/work",
+      "statusCode": 301
     },
     {
       "source": "/david-branch-brazilian-jiu-jitsu-logo",
       "destination": "/work/david-branch",
-      "permanent": true
+      "statusCode": 301
+    },
+    {
+      "source": "/guarded-globe",
+      "destination": "/work/guarded-globe",
+      "statusCode": 301
+    },
+    {
+      "source": "/kingz-balistico-design",
+      "destination": "/work/kingz-balistico",
+      "statusCode": 301
+    },
+    {
+      "source": "/ladies-winter-boots-poster",
+      "destination": "/work",
+      "statusCode": 301
+    },
+    {
+      "source": "/love-bridal-branding",
+      "destination": "/work/love-bridal",
+      "statusCode": 301
+    },
+    {
+      "source": "/maeda-akashio",
+      "destination": "/work/maeda-akashio",
+      "statusCode": 301
+    },
+    {
+      "source": "/maeda-brand-jiu-jitsu-kimono-conde-koma-comeco",
+      "destination": "/work",
+      "statusCode": 301
+    },
+    {
+      "source": "/maeda-red-label",
+      "destination": "/work/maeda-red-label",
+      "statusCode": 301
+    },
+    {
+      "source": "/orkal-banner",
+      "destination": "/work",
+      "statusCode": 301
+    },
+    {
+      "source": "/orkal-industries",
+      "destination": "/work",
+      "statusCode": 301
+    },
+    {
+      "source": "/pizza-by-certe",
+      "destination": "/work",
+      "statusCode": 301
     },
     {
       "source": "/rollshop-branding",
       "destination": "/work/rollshop",
-      "permanent": true
+      "statusCode": 301
     },
     {
       "source": "/ronin-emperor",
       "destination": "/work/ronin-emperor",
-      "permanent": true
+      "statusCode": 301
+    },
+    {
+      "source": "/ronin-lonewolf-gi-rashguard",
+      "destination": "/work",
+      "statusCode": 301
+    },
+    {
+      "source": "/shellproof-security",
+      "destination": "/work/shellproof-security",
+      "statusCode": 301
+    },
+    {
+      "source": "/sitemap.xml",
+      "destination": "/sitemap-index.xml",
+      "statusCode": 301
     }
   ],
   "headers": [
