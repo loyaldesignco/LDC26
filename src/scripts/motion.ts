@@ -62,6 +62,7 @@ function init() {
   const splits = $$("[data-split]");
   splits.filter((el) => isIntro(el)).forEach(splitWords);
   intro();
+  blockReveals();
   smoothScroll();
   heroScroll();
   const later: (() => void)[] = [
@@ -414,6 +415,10 @@ function reveals() {
     if (isIntro(el)) return;
     observe(el, (t, now) => gsap.to($$(".lp-w", t), { y: 0, rotate: 0, duration: now ? 0 : 1.4, ease: "expo.out", stagger: now ? 0 : 0.05 }));
   });
+}
+
+/** Block reveals are wired first thing, so content in the opening view starts fading in on the first frames. */
+function blockReveals() {
   $$("[data-reveal]").forEach((el) => {
     if (el.closest("#top")) return;
     observe(el, (t, now) => gsap.to(t, { opacity: 1, y: 0, duration: now ? 0 : 1.6, ease: "expo.out" }));
