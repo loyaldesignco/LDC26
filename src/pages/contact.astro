@@ -54,7 +54,7 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
       {
         channels.map((c) => (
           <div data-hud>
-            <p class="mono mb-3 text-[0.66rem] text-paper/45">{c.label}</p>
+            <p class="mono mb-3 text-[0.66rem] text-paper/55">{c.label}</p>
             {c.href ? <a href={c.href} class="grad-hover text-[1.05rem] leading-normal">{c.value}</a> : <p class="m-0 text-[1.05rem] leading-normal">{c.value}</p>}
           </div>
         ))
@@ -98,12 +98,12 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
         <div class="mt-2 flex flex-wrap items-center gap-4">
           <button type="button" data-back hidden class="cursor-pointer border border-paper/40 bg-transparent px-[26px] py-[15px] text-[0.82rem] font-semibold uppercase tracking-[0.04em] text-paper transition-colors hover:border-pink hover:text-pink">Back</button>
           <button type="submit" class="btn btn-solid !px-[30px] !font-sans !text-[0.82rem] !font-semibold !tracking-[0.04em]" data-next>Send inquiry</button>
-          <span class="mono text-paper/40" data-progress></span>
+          <span class="mono text-paper/55" data-progress></span>
         </div>
         <p class="m-0 text-[0.94rem] text-pink" role="alert" data-error></p>
         {
           recaptchaKey && (
-            <p class="mono m-0 text-[0.6rem] leading-relaxed text-paper/35">
+            <p class="mono m-0 text-[0.6rem] leading-relaxed text-paper/55">
               Protected by reCAPTCHA. Google's <a class="u-link" href="https://policies.google.com/privacy" rel="noopener" target="_blank">Privacy Policy</a> and{" "}
               <a class="u-link" href="https://policies.google.com/terms" rel="noopener" target="_blank">Terms of Service</a> apply.
             </p>

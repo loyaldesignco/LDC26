@@ -2,7 +2,7 @@
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import PostCard from "@/components/PostCard.astro";
 import { formatDate, getPost, getPosts, renderBody } from "@/lib/sanity";
-import { src } from "@/lib/media";
+import { src, srcset } from "@/lib/media";
 
 export async function getStaticPaths() {
   const posts = await getPosts();
@@ -28,7 +28,7 @@ const body = renderBody(post.body);
     </div>
     <h1 data-split class="display-page max-w-[20ch] !text-[clamp(2.2rem,5.6vw,5rem)]">{post.title}</h1>
     <p data-reveal class="mb-0 mt-[clamp(24px,3vw,40px)] max-w-[40ch] text-[clamp(1.2rem,1.8vw,1.6rem)] font-medium leading-[1.4]">{post.excerpt}</p>
-    {post.cover && <div data-parallax="hero" class="frame mt-[clamp(40px,6vw,80px)] aspect-[2.2] rounded-xl"><img src={src(post.cover, 2400)} alt="" /></div>}
+    {post.cover && <div data-parallax="hero" class="frame mt-[clamp(40px,6vw,80px)] aspect-[2.2] rounded-xl"><img src={src(post.cover, 1600)} srcset={srcset(post.cover)} sizes="(max-width: 900px) 100vw, 90vw" alt="" fetchpriority="high" /></div>}
     <div data-reveal class="prose-loyal mt-[clamp(48px,7vw,96px)] md:ml-[33%]" set:html={body} />
   </article>
 

@@ -10,7 +10,7 @@ const { post, index } = Astro.props;
 ---
 
 <a href={`/journal/${post.slug}`} class="lp-work-row group !items-start">
-  <span class="mono pt-2 text-[0.64rem] text-paper/40">{String(index + 1).padStart(2, "0")}</span>
+  <span class="mono pt-2 text-[0.64rem] text-paper/55">{String(index + 1).padStart(2, "0")}</span>
   <span>
     <span class="lp-work-title grad-hover block text-[clamp(1.4rem,2.6vw,2.2rem)] font-bold leading-[1.05] tracking-[-0.025em] group-hover:[background-image:var(--grad)] group-hover:[-webkit-background-clip:text] group-hover:[background-clip:text] group-hover:text-transparent">{post.title}</span>
     <span class="mt-3 block max-w-[60ch] leading-relaxed text-paper/55">{post.excerpt}</span>

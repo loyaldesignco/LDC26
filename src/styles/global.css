@@ -10,7 +10,7 @@
 
 @font-face {
   font-family: "Bauhaus Desk Display";
-  src: url("/fonts/BauhausDeskDisplay-Medium.otf") format("opentype");
+  src: url("/fonts/BauhausDeskDisplay-Medium.woff2") format("woff2"), url("/fonts/BauhausDeskDisplay-Medium.otf") format("opentype");
   font-weight: 500;
   font-display: swap;
 }
@@ -91,7 +91,7 @@ html.lenis, html.lenis body { height: auto; }
     font-size: 0.72rem;
     letter-spacing: 0.07em;
     text-transform: uppercase;
-    color: rgb(249 246 240 / 0.45);
+    color: rgb(249 246 240 / 0.58);
   }
   .mono {
     font-family: var(--mono);
@@ -307,7 +307,7 @@ html.lenis, html.lenis body { height: auto; }
   .prose-loyal ul { list-style: disc; padding-left: 1.2em; }
   .prose-loyal blockquote { border-left: 1px solid var(--pink); padding-left: 1.2em; color: var(--paper); font-family: var(--serif); font-size: 1.6rem; line-height: 1.2; }
   .prose-loyal figure img { border-radius: 12px; }
-  .prose-loyal figcaption { margin-top: 0.6em; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgb(249 246 240 / 0.45); }
+  .prose-loyal figcaption { margin-top: 0.6em; font-family: var(--mono); font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.06em; color: rgb(249 246 240 / 0.58); }
 }
 
 /* ------------------------------------------------------------------ chrome */
@@ -494,7 +494,7 @@ details.lp-acc:hover { background: rgb(249 246 240 / 0.03); }
 .lp-w { display: inline-block; transform-origin: 0% 100%; }
 .motion .lp-w { transform: translateY(115%) rotate(5deg); }
 .motion [data-reveal] { opacity: 0; transform: translateY(56px); }
-.motion [data-hud] { opacity: 0; }
+.motion [data-hud]:not(#top [data-hud]) { opacity: 0; }
 
 @media (prefers-reduced-motion: reduce) {
   .lp-marquee-track { animation: none; }

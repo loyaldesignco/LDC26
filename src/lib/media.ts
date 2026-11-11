@@ -38,6 +38,21 @@ export function logoUrl(image: SanityImage | null | undefined): string | null {
 /** Shorthand for the sizes the layouts actually use. */
 export const src = (image: SanityImage | null | undefined, width = 1600, height?: number) => imageUrl(image, width, height) ?? "";
 
+const WIDTHS = [480, 720, 960, 1280, 1600, 2000, 2400];
+
+/**
+ * srcset for a Sanity image: one candidate per width up to `max` (and never wider than the
+ * original). Local images get no srcset, so the browser falls back to src.
+ */
+export function srcset(image: SanityImage | null | undefined, max = 2400): string | undefined {
+  if (!image?.asset?._ref) return undefined;
+  const m = image.asset._ref.match(/-(\d+)x(\d+)-/);
+  const natural = m ? +m[1] : max;
+  const ws = WIDTHS.filter((w) => w <= Math.min(max, natural));
+  if (!ws.length || ws[ws.length - 1] < Math.min(max, natural)) ws.push(Math.min(max, natural));
+  return ws.map((w) => `${imageUrl(image, w)} ${w}w`).join(", ");
+}
+
 const maskCache = new Map<string, string>();
 
 /**

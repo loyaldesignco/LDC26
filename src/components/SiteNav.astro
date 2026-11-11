@@ -64,7 +64,7 @@ const current = (href: string) => (href === "/" ? path === "/" : path.startsWith
       <div class="relative flex w-full gap-8 pt-6">
         <div class="underlay-nav__bottom-border absolute inset-x-0 top-0 h-px origin-left bg-current opacity-15"></div>
         <div class="flex flex-1 flex-col gap-4">
-          <div data-reveal-s><span class="mono text-paper/40">[ Socials ]</span></div>
+          <div data-reveal-s><span class="mono text-paper/55">[ Socials ]</span></div>
           <ul class="m-0 flex list-none flex-col gap-3 p-0">
             {
               settings.socials.map((s) => (
@@ -76,7 +76,7 @@ const current = (href: string) => (href === "/" ? path === "/" : path.startsWith
           </ul>
         </div>
         <div class="flex flex-1 flex-col gap-4">
-          <div data-reveal-s><span class="mono text-paper/40">[ Contact ]</span></div>
+          <div data-reveal-s><span class="mono text-paper/55">[ Contact ]</span></div>
           <ul class="m-0 flex list-none flex-col gap-3 p-0">
             <li data-reveal-s><a href={`mailto:${settings.email}`} class="menu-sub grad-hover text-paper/75">{settings.email}</a></li>
             <li data-reveal-s><a href="/contact" class="menu-sub grad-hover text-paper/75">Start a project ↗</a></li>

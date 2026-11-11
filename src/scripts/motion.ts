@@ -355,7 +355,10 @@ function intro() {
   const counter = $("#lp-counter");
   const wipeIn = $("#lp-wipe-in");
   const words = $$(".lp-w").filter((w) => isIntro(w.closest("[data-split]")!));
-  const huds = $$("[data-hud]");
+  const huds = $$("[data-hud]").filter((h) => !h.closest("#top"));
+  // Hero copy stays painted from the first frame (it's the page's largest text, so hiding it
+  // would hold back LCP); it only slides into place.
+  const heroHuds = $$("#top [data-hud]");
   const heroFrame = $('[data-parallax="hero"]');
   const tl = gsap.timeline();
 
@@ -374,7 +377,8 @@ function intro() {
   }
   if (heroFrame) tl.fromTo(heroFrame, { scale: 1.12, opacity: 0.001 }, { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=0.5");
   if (words.length) tl.to(words, { y: 0, rotate: 0, duration: 1.5, ease: "expo.out", stagger: { each: 0.06, ease: "power1.in" } }, heroFrame ? "<0.1" : "-=0.4");
-  if (huds.length) tl.fromTo(huds, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: "power2.out" }, "<0.4");
+  if (heroHuds.length) tl.fromTo(heroHuds, { y: 14 }, { y: 0, duration: 1.1, stagger: 0.12, ease: "power2.out" }, "<0.4");
+  if (huds.length) tl.fromTo(huds, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: "power2.out" }, "<");
 }
 
 /* ---------------------------------------------------------------- reveals */
@@ -524,8 +528,19 @@ function heroSlideshow() {
   const slides: string[] = JSON.parse(canvas.dataset.slides || "[]");
   const meta: { label: string; href: string; logo: string }[] = JSON.parse(canvas.dataset.meta || "[]");
   if (slides.length < 2) return;
-  const start = () => import("./hero-gl").then(({ heroGL }) => heroGL(canvas, hero, slides, (i) => setNote(meta[i]))).catch(() => {});
-  if ("requestIdleCallback" in window) requestIdleCallback(() => start(), { timeout: 3000 }); else setTimeout(start, 1500);
+  // The first cross-over is 25s in, so the WebGL layer (three.js + shader compile + texture
+  // uploads) waits for the visitor to do something, or 15s, keeping it off the critical path.
+  let started = false;
+  const evs = ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "scroll"] as const;
+  const start = () => {
+    if (started) return;
+    started = true;
+    evs.forEach((e) => removeEventListener(e, start));
+    const go = () => import("./hero-gl").then(({ heroGL }) => heroGL(canvas, hero, slides, (i) => setNote(meta[i]))).catch(() => {});
+    if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 2000 }); else setTimeout(go, 200);
+  };
+  evs.forEach((e) => addEventListener(e, start, { once: true, passive: true }));
+  setTimeout(start, 15000);
 }
 
 function setNote(m?: { label: string; href: string; logo: string }) {

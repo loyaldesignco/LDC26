@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { byNewest, categoriesOf, getProjects, getServices } from "@/lib/sanity";
-import { src } from "@/lib/media";
+import { src, srcset } from "@/lib/media";
 
 export async function getStaticPaths() {
   const services = (await getServices()).filter((s) => s.slug);
@@ -37,7 +37,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
           <div class="grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-px border border-paper/12 bg-paper/12">
             {s.capabilities.map((c, i) => (
               <div class="lp-cell" data-reveal>
-                <span class="lp-cell-num mono text-paper/45">{pad(i)}</span>
+                <span class="lp-cell-num mono text-paper/55">{pad(i)}</span>
                 <h3 class="mb-3 mt-[clamp(28px,4vw,56px)] text-[clamp(1.2rem,1.8vw,1.5rem)] font-bold leading-[1.1] tracking-[-0.02em]">{c.name}</h3>
                 <p class="m-0 text-[0.96rem] leading-relaxed text-paper/60">{c.desc}</p>
               </div>
@@ -48,7 +48,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
             {s.capabilities.map((c, i) => (
               <div class="lp-cap" data-reveal>
                 <span class="lp-cap-rule" />
-                <span class="lp-cap-num mono text-paper/45">{pad(i)}</span>
+                <span class="lp-cap-num mono text-paper/55">{pad(i)}</span>
                 <h3 class="m-0 text-[clamp(1.3rem,2.4vw,2rem)] font-bold leading-[1.05] tracking-[-0.025em]">{c.name}</h3>
                 <p class="m-0 max-w-[52ch] leading-relaxed text-paper/60">{c.desc}</p>
               </div>
@@ -97,7 +97,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
               {s.steps.map((st, i) => (
                 <details class="lp-acc border-t border-paper/16" open={i === 0}>
                   <summary class="grid grid-cols-[3rem_minmax(0,1fr)_auto] items-baseline gap-4 px-2 py-5">
-                    <span class="mono text-paper/45">{pad(i)}</span>
+                    <span class="mono text-paper/55">{pad(i)}</span>
                     <span class="text-[clamp(1.2rem,2vw,1.6rem)] font-bold tracking-[-0.02em]">{st.name}</span>
                     <span class="mono text-paper/50">{st.dur}</span>
                   </summary>
@@ -113,7 +113,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
           {s.image && (
             <div class="top-[110px] md:sticky">
               <div data-reveal data-parallax class="frame aspect-[4/5] rounded-xl">
-                <img src={src(s.image, 1400)} alt={s.image.alt ?? ""} loading="lazy" />
+                <img src={src(s.image, 1280)} srcset={srcset(s.image, 1600)} sizes="(max-width: 900px) 100vw, 50vw" alt={s.image.alt ?? ""} loading="lazy" decoding="async" />
                 <div class="wash" />
               </div>
             </div>
@@ -135,7 +135,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
             {s.faq.map((f, i) => (
               <details class="lp-acc border-t border-paper/16">
                 <summary class="grid grid-cols-[3rem_minmax(0,1fr)_auto] items-baseline gap-4 px-2 py-5">
-                  <span class="mono text-paper/45">{pad(i)}</span>
+                  <span class="mono text-paper/55">{pad(i)}</span>
                   <span class="text-[clamp(1.1rem,1.8vw,1.4rem)] font-bold tracking-[-0.02em]">{f.q}</span>
                   <span class="lp-acc-sign font-mono text-lg leading-none" aria-hidden="true">+</span>
                 </summary>
@@ -178,7 +178,7 @@ const pad = (i: number) => String(i + 1).padStart(2, "0");
   {
     next && next.slug !== s.slug && (
       <section class="lp-next gutter relative isolate overflow-hidden bg-surface py-[clamp(64px,9vw,130px)]">
-        {next.image && <img class="lp-next-bg pointer-events-none absolute inset-0 -z-[2] size-full object-cover" src={src(next.image, 2000)} alt="" loading="lazy" />}
+        {next.image && <img class="lp-next-bg pointer-events-none absolute inset-0 -z-[2] size-full object-cover" src={src(next.image, 1280)} srcset={srcset(next.image, 2000)} sizes="100vw" alt="" loading="lazy" decoding="async" />}
         <div class="lp-next-veil pointer-events-none absolute inset-0 -z-[1]" />
         <div class="pointer-events-none absolute inset-0 -z-[1] bg-[linear-gradient(to_right,rgba(20,20,20,0.92)_0%,rgba(20,20,20,0.55)_55%,rgba(20,20,20,0.3)_100%)]" />
         <p class="eyebrow mb-4 text-paper/50">[ Next service ]</p>

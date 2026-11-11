@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { byNewest, categoriesOf, getProject, getProjects, renderBody } from "@/lib/sanity";
-import { logoUrl, src } from "@/lib/media";
+import { logoUrl, src, srcset } from "@/lib/media";
 
 export async function getStaticPaths() {
   const projects = byNewest(await getProjects());
@@ -55,7 +55,7 @@ const facts = [
 
     <section class="gutter">
       <div data-parallax="hero" class="frame aspect-video rounded-xl">
-        {project.cover && <img src={src(project.cover, 2400)} alt={project.cover.alt ?? project.title} fetchpriority="high" />}
+        {project.cover && <img src={src(project.cover, 1600)} srcset={srcset(project.cover)} sizes="(max-width: 900px) 100vw, 90vw" alt={project.cover.alt ?? project.title} fetchpriority="high" />}
       </div>
     </section>
 
@@ -77,7 +77,7 @@ const facts = [
             {
               facts.map((f) => (
                 <div class="mono flex justify-between gap-6 border-b border-paper/12 pb-2.5 text-[0.72rem] text-paper/60">
-                  <dt class="text-paper/40">{f.label}</dt>
+                  <dt class="text-paper/55">{f.label}</dt>
                   <dd class="m-0 text-right">{f.value}</dd>
                 </div>
               ))
@@ -97,13 +97,13 @@ const facts = [
           {groups.map((g) =>
             g.wide ? (
               <div data-reveal data-parallax class="frame aspect-video rounded-xl">
-                <img src={src(g.items[0], 2400)} alt={g.items[0].alt ?? ""} loading="lazy" />
+                <img src={src(g.items[0], 1600)} srcset={srcset(g.items[0])} sizes="(max-width: 900px) 100vw, 90vw" alt={g.items[0].alt ?? ""} loading="lazy" decoding="async" />
               </div>
             ) : (
               <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-[clamp(12px,1.5vw,24px)]">
                 {g.items.map((img) => (
                   <div data-reveal data-parallax class="frame aspect-[4/3] rounded-xl">
-                    <img src={src(img, 1400)} alt={img.alt ?? ""} loading="lazy" />
+                    <img src={src(img, 1280)} srcset={srcset(img, 1600)} sizes="(max-width: 900px) 100vw, 45vw" alt={img.alt ?? ""} loading="lazy" decoding="async" />
                   </div>
                 ))}
               </div>
@@ -117,7 +117,7 @@ const facts = [
   {
     next && next.slug !== project.slug && (
       <section class="lp-next gutter relative isolate overflow-hidden bg-surface py-[clamp(64px,9vw,130px)]">
-        {next.cover && <img class="lp-next-bg pointer-events-none absolute inset-0 -z-[2] size-full object-cover" src={src(next.cover, 2000)} alt="" loading="lazy" />}
+        {next.cover && <img class="lp-next-bg pointer-events-none absolute inset-0 -z-[2] size-full object-cover" src={src(next.cover, 1280)} srcset={srcset(next.cover, 2000)} sizes="100vw" alt="" loading="lazy" decoding="async" />}
         <div class="lp-next-veil pointer-events-none absolute inset-0 -z-[1]" />
         <div class="pointer-events-none absolute inset-0 -z-[1] bg-[linear-gradient(to_right,rgba(20,20,20,0.92)_0%,rgba(20,20,20,0.55)_55%,rgba(20,20,20,0.3)_100%)]" />
         <p class="eyebrow mb-4 text-paper/50">[ Next Project ]</p>

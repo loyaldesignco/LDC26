@@ -6,7 +6,8 @@ import { legacyRedirects } from "./redirects.mjs";
 
 
 export default defineConfig({
-  site: "https://loyal.design",
+  site: "https://www.loyal.design",
+  build: { inlineStylesheets: "always" },
   trailingSlash: "never",
   prefetch: { prefetchAll: true },
   redirects: Object.fromEntries(Object.entries(legacyRedirects).map(([from, to]) => [from, { status: 301, destination: to }])),

@@ -100,7 +100,7 @@ const sorts = [
           items.map((p, i) => (
             <li data-item data-slug={p.slug} data-title={p.title} data-year={p.year} data-cats={p.cats.join("|")}>
               <a href={`/work/${p.slug}`} class="lp-work-row" data-img={p.img}>
-                <span class="mono text-[0.64rem] tracking-[0.05em] text-paper/40" data-num>{String(i + 1).padStart(2, "0")}</span>
+                <span class="mono text-[0.64rem] tracking-[0.05em] text-paper/55" data-num>{String(i + 1).padStart(2, "0")}</span>
                 <span class="lp-work-title text-[clamp(1.4rem,2.6vw,2.2rem)] font-bold leading-[1.02] tracking-[-0.025em]">{p.title}</span>
                 <span class="mono text-[0.66rem] tracking-[0.05em] text-paper/50">[ {p.cats.join(" · ") || "Studio"} ]</span>
                 <span class="mono text-[0.66rem] tracking-[0.05em] text-paper/50">{p.year || "—"}</span>
@@ -113,7 +113,7 @@ const sorts = [
       <div class="border-t border-paper/[0.18]"></div>
     </div>
 
-    <p data-empty hidden class="mono m-0 text-[0.72rem] text-paper/45">[ No projects in this category yet ]</p>
+    <p data-empty hidden class="mono m-0 text-[0.72rem] text-paper/55">[ No projects in this category yet ]</p>
   </section>
 
   <div id="lp-float-card" aria-hidden="true">

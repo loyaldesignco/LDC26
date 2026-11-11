@@ -3,7 +3,7 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import ClientMarquee from "@/components/ClientMarquee.astro";
 import LocalTime from "@/components/LocalTime.astro";
 import { categoriesOf, getProjects, getServices, getSettings, WORK_CATEGORIES } from "@/lib/sanity";
-import { logoMaskUrl, src } from "@/lib/media";
+import { logoMaskUrl, src, srcset } from "@/lib/media";
 import type { Service } from "@/lib/types";
 
 const [settings, projects, services] = await Promise.all([getSettings(), getProjects(), getServices()]);
@@ -28,11 +28,14 @@ const principles = [
   { label: "Loyalty Earned", lines: ["Long partnerships.", "Straight answers.", "Work that holds."] },
 ];
 const depths = [6, 10, 4.5];
+// The hero photo is cover-fit at 1.2x scale over a 115svh section: wide screens need ~1.2vw of
+// width, tall phones need the width a portrait photo has at ~1.4x the viewport height.
+const heroSizes = "max(120vw, 92vh)";
 ---
 
 <BaseLayout intro="home">
   <Fragment slot="head">
-    {first && <link rel="preload" as="image" href={src(first.image, 2400)} fetchpriority="high" />}
+    {first && <link rel="preload" as="image" href={src(first.image, 1280)} imagesrcset={srcset(first.image)} imagesizes={heroSizes} fetchpriority="high" />}
   </Fragment>
 
   <nav slot="chrome" data-chapter-rail aria-hidden="true" class="pointer-events-none fixed left-[clamp(10px,1.4vw,20px)] top-1/2 z-40 -translate-y-1/2 flex-col gap-[15px]">
@@ -41,8 +44,8 @@ const depths = [6, 10, 4.5];
 
   <!-- 00 Hero -->
   <section id="top" data-hero class="lp-hero relative flex min-h-[115svh] flex-col overflow-clip bg-plum">
-    {first && <img data-parallax-img src={src(first.image, 2400)} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
-    {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 2400)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
+    {first && <img data-parallax-img src={src(first.image, 1280)} srcset={srcset(first.image)} sizes={heroSizes} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
+    {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 1920)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
     <div class="wash"></div>
     <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
 
@@ -67,7 +70,7 @@ const depths = [6, 10, 4.5];
               {settings.socials.map((s, i) => (
                 <>
                   {i > 0 && <span class="opacity-50" aria-hidden="true">/</span>}
-                  <a href={s.url} class="grad-hover" rel="me noopener" target="_blank" aria-label={s.label}>{abbr[s.label] ?? s.label}</a>
+                  <a href={s.url} class="grad-hover" rel="me noopener" target="_blank"><span aria-hidden="true">{abbr[s.label] ?? s.label}</span><span class="sr-only">{s.label}</span></a>
                 </>
               ))}
             </div>
@@ -117,7 +120,7 @@ const depths = [6, 10, 4.5];
     <p data-reveal class="lede mt-[clamp(28px,4vw,48px)] max-w-[54ch] !text-[1.13rem]">Since 2011 we've partnered with emerging and established businesses on identity, web and graphic design. Strategy first, craft always, no decoration for its own sake.</p>
     <div data-reveal class="mt-[clamp(40px,5vw,68px)] flex items-center gap-3.5">
       <span class="block h-px w-[clamp(40px,5vw,72px)] bg-paper/30"></span>
-      <span class="mono tracking-[0.09em] text-paper/40">02 &nbsp;/ &nbsp;Selected work below</span>
+      <span class="mono tracking-[0.09em] text-paper/55">02 &nbsp;/ &nbsp;Selected work below</span>
     </div>
   </section>
 
@@ -127,7 +130,7 @@ const depths = [6, 10, 4.5];
       settings.homePanels.slice(0, 3).map((img, i) => (
         <div class="lp-rp-panel frame">
           <span data-parallax data-depth={depths[i]} class="absolute inset-0 block">
-            <img src={src(img, 1400)} alt={img.alt ?? ""} loading="lazy" class="size-full object-cover" />
+            <img src={src(img, 1280)} srcset={srcset(img, 1600)} sizes="(max-width: 900px) 120vw, 60vw" alt={img.alt ?? ""} loading="lazy" decoding="async" class="size-full object-cover" />
           </span>
           {i === 0 && (
             <>
@@ -160,7 +163,7 @@ const depths = [6, 10, 4.5];
       {
         services.map((s, i) => (
           <a class="lp-svc-row" data-svc-row href={serviceHref(s)}>
-            <span class="mono text-paper/40">{String(i + 1).padStart(2, "0")}</span>
+            <span class="mono text-paper/55">{String(i + 1).padStart(2, "0")}</span>
             <h3 class="lp-svc-title m-0 text-[clamp(1.3rem,2.6vw,2.2rem)] font-bold leading-[1.02] tracking-[-0.03em]">{s.title}</h3>
             <p class="lp-svc-desc mono m-0 text-[0.72rem] leading-[1.7] tracking-[0.05em] text-paper/50">{s.summary}</p>
             <span class="lp-svc-thumb frame block aspect-[4/3] w-[clamp(160px,20vw,340px)] bg-ink" data-parallax data-depth="8">
@@ -178,7 +181,7 @@ const depths = [6, 10, 4.5];
     {
       settings.processImage && (
         <div data-parallax class="absolute inset-0 overflow-hidden">
-          <img src={src(settings.processImage, 2000)} alt="" loading="lazy" class="size-full object-cover" />
+          <img src={src(settings.processImage, 1280)} srcset={srcset(settings.processImage, 2000)} sizes="(max-width: 900px) 120vw, 55vw" alt="" loading="lazy" decoding="async" class="size-full object-cover" />
         </div>
       )
     }

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getProjects, getSettings } from "@/lib/sanity";
-import { src } from "@/lib/media";
+import { src, srcset } from "@/lib/media";
 
 const [settings, projects] = await Promise.all([getSettings(), getProjects()]);
 const years = new Date().getFullYear() - 2011;
@@ -46,7 +46,7 @@ const timeline = [
   <section class="gutter pb-[clamp(64px,9vw,130px)]">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-center gap-[clamp(32px,6vw,88px)]">
       <div data-reveal data-parallax class="frame aspect-[4/5] rounded-xl">
-        {settings.portrait && <img src={src(settings.portrait, 1400)} alt={settings.portrait.alt ?? ""} loading="lazy" />}
+        {settings.portrait && <img src={src(settings.portrait, 1280)} srcset={srcset(settings.portrait, 1600)} sizes="(max-width: 900px) 100vw, 50vw" alt={settings.portrait.alt ?? ""} loading="lazy" />}
         <div class="wash opacity-60"></div>
       </div>
       <div>
@@ -55,7 +55,7 @@ const timeline = [
           {
             stats.map((s) => (
               <div class="border-t border-paper/[0.18] pt-4">
-                <dt class="mono mb-3 text-paper/45">{s.label}</dt>
+                <dt class="mono mb-3 text-paper/55">{s.label}</dt>
                 <dd class="m-0 text-[clamp(2.6rem,6vw,5rem)] font-bold leading-none tracking-[-0.04em] tabular-nums">{s.value}</dd>
               </div>
             ))
@@ -73,7 +73,7 @@ const timeline = [
         principles.map((p, i) => (
           <div class="lp-cap" data-reveal>
             <span class="lp-cap-rule" />
-            <span class="lp-cap-num mono text-paper/45">{String(i + 1).padStart(2, "0")}</span>
+            <span class="lp-cap-num mono text-paper/55">{String(i + 1).padStart(2, "0")}</span>
             <h3 class="m-0 text-[clamp(1.3rem,2.4vw,2rem)] font-bold leading-[1.05] tracking-[-0.025em]">{p.name}</h3>
             <p class="m-0 max-w-[52ch] text-[1rem] leading-relaxed text-paper/60">{p.desc}</p>
           </div>

@@ -16,11 +16,11 @@ const row = items.filter((i) => i.url);
   row.length > 0 && (
     <div class="lp-marquee" data-marquee>
       {[0, 1].map((copy) => (
-        <ul class="lp-marquee-track m-0 list-none p-0" data-marquee-track aria-hidden={copy === 1 ? "true" : undefined}>
+        <div class="lp-marquee-track" data-marquee-track aria-hidden={copy === 1 ? "true" : undefined}>
           {row.map((c) => (
-            <li class="client-logo" role="img" aria-label={c.name} style={`-webkit-mask-image:url('${c.url}');mask-image:url('${c.url}');--ar:${c.ar.toFixed(3)};--s:${c.scale}`} />
+            <span class="client-logo" role="img" aria-label={c.name} style={`-webkit-mask-image:url('${c.url}');mask-image:url('${c.url}');--ar:${c.ar.toFixed(3)};--s:${c.scale}`} />
           ))}
-        </ul>
+        </div>
       ))}
     </div>
   )

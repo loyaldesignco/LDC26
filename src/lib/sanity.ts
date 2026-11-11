@@ -19,10 +19,10 @@ export const client: SanityClient | null = projectId
 
 const builder = projectId ? createImageUrlBuilder({ projectId, dataset }) : null;
 
-export function imageUrl(image: SanityImage | null | undefined, width = 1600, height?: number): string | null {
+export function imageUrl(image: SanityImage | null | undefined, width = 1600, height?: number, quality = 75): string | null {
   if (image?.url) return image.url;
   if (!builder || !image?.asset?._ref) return null;
-  let b = builder.image(image).width(width).auto("format").quality(82);
+  let b = builder.image(image).width(width).auto("format").quality(quality);
   if (height) b = b.height(height).fit("crop");
   return b.url();
 }

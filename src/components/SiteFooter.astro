@@ -15,11 +15,11 @@ const year = new Date().getFullYear();
       <p class="m-0 text-[0.94rem] leading-relaxed text-paper/60">{settings.location}<br />United States</p>
     </div>
     <div>
-      <p class="mono mb-4 text-paper/45">[ Contact ]</p>
+      <p class="mono mb-4 text-paper/55">[ Contact ]</p>
       <p class="m-0 text-[0.94rem] leading-[1.8]"><a href={`mailto:${settings.email}`} class="u-link grad-hover">{settings.email}</a></p>
     </div>
     <div>
-      <p class="mono mb-4 text-paper/45">[ Social ]</p>
+      <p class="mono mb-4 text-paper/55">[ Social ]</p>
       <ul class="m-0 list-none p-0 text-[0.94rem] leading-[1.8]">
         {
           settings.socials.map((s) => (
@@ -31,11 +31,11 @@ const year = new Date().getFullYear();
       </ul>
     </div>
     <div>
-      <p class="mono mb-4 text-paper/45">[ Next ]</p>
+      <p class="mono mb-4 text-paper/55">[ Next ]</p>
       <a href="/contact" class="grad-hover inline-block border-b border-paper pb-1.5 text-[clamp(1.6rem,2.6vw,2.2rem)] font-bold leading-none transition-[border-color] hover:border-pink">Start a project →</a>
     </div>
   </div>
-  <div class="mono flex flex-wrap justify-between gap-4 pt-6 text-[0.66rem] tracking-[0.05em] text-paper/40">
+  <div class="mono flex flex-wrap justify-between gap-4 pt-6 text-[0.66rem] tracking-[0.05em] text-paper/55">
     <span>© {year} Loyal Design Co.</span>
     <span class="flex items-center gap-2.5">[ Made in-house <img src="/brand/loyal-mark-white.svg" alt="" class="h-3 w-auto opacity-55" width="12" height="12" /> NYC ]</span>
     <span class="flex items-center gap-3"><img src="/brand/loyal-globe-gradient.svg" alt="" class="h-[18px] w-auto" width="47" height="18" />{settings.credentials[0] ?? settings.location}</span>
