@@ -60,11 +60,19 @@ function init() {
   // Above-the-fold work runs now; everything else is queued in small slices so no single
   // task blocks the main thread for long while the page is loading.
   const splits = $$("[data-split]");
-  splits.filter((el) => isIntro(el)).forEach(splitWords);
   intro();
-  blockReveals();
   smoothScroll();
   heroScroll();
+  // Text that animates in starts hidden; it's laid out and revealed once the web fonts are in
+  // (capped at 1.2s), so the font swap happens while it's invisible and nothing on screen moves.
+  fontsSettled(1200).then(() => {
+    const own = splits.filter((el) => isIntro(el));
+    own.forEach(splitWords);
+    const words = own.flatMap((el) => $$(".lp-w", el));
+    if (words.length) gsap.to(words, { y: 0, rotate: 0, duration: 1.5, ease: "expo.out", stagger: { each: 0.06, ease: "power1.in" } });
+    blockReveals();
+    setTimeout(run, 0);
+  });
   const later: (() => void)[] = [
     cursor,
     anchorWipe,
@@ -78,12 +86,26 @@ function init() {
     refreshes,
     revealFailsafe,
   ];
-  const run = () => {
+  function run() {
     const end = performance.now() + 12;
     while (later.length && performance.now() < end) later.shift()!();
     if (later.length) setTimeout(run, 0);
-  };
-  setTimeout(run, 0);
+  }
+}
+
+/** Resolves when the Adobe Fonts stylesheet has registered its faces and they've loaded, or after `cap` ms. */
+function fontsSettled(cap: number): Promise<void> {
+  const fonts = document.fonts;
+  if (!fonts) return Promise.resolve();
+  const timeout = new Promise<void>((r) => setTimeout(r, cap));
+  const registered = new Promise<void>((resolve) => {
+    const has = () => [...fonts].some((f) => f.family.replace(/"/g, "") === "neue-haas-grotesk-display");
+    if (has()) return resolve();
+    const link = document.querySelector<HTMLLinkElement>('link[href*="use.typekit.net"]');
+    link?.addEventListener("load", () => resolve(), { once: true });
+    const poll = setInterval(() => has() && (clearInterval(poll), resolve()), 50);
+  });
+  return Promise.race([registered.then(() => fonts.ready).then(() => undefined), timeout]);
 }
 
 /* ---------------------------------------------------------------- scroll */
@@ -371,7 +393,6 @@ function intro() {
   const pre = $("#lp-preloader");
   const counter = $("#lp-counter");
   const wipeIn = $("#lp-wipe-in");
-  const words = $$(".lp-w").filter((w) => isIntro(w.closest("[data-split]")!));
   const huds = $$("[data-hud]").filter((h) => !h.closest("#top"));
   // Hero copy stays painted from the first frame (it's the page's largest text, so hiding it
   // would hold back LCP); it only slides into place.
@@ -393,7 +414,7 @@ function intro() {
     tl.to(wipeIn, { yPercent: -100, duration: 0.9, ease: "expo.inOut" }).set(wipeIn, { display: "none" });
   }
   if (heroFrame) tl.fromTo(heroFrame, { scale: 1.12, opacity: 0.001 }, { scale: 1, opacity: 1, duration: 2, ease: "expo.out" }, "-=0.5");
-  if (words.length) tl.to(words, { y: 0, rotate: 0, duration: 1.5, ease: "expo.out", stagger: { each: 0.06, ease: "power1.in" } }, heroFrame ? "<0.1" : "-=0.4");
+
   if (heroHuds.length) tl.fromTo(heroHuds, { y: 14 }, { y: 0, duration: 1.1, stagger: 0.12, ease: "power2.out" }, "<0.4");
   if (huds.length) tl.fromTo(huds, { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 1.1, stagger: 0.12, ease: "power2.out" }, "<");
 }
