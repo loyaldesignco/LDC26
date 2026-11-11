@@ -65,8 +65,8 @@ function init() {
   smoothScroll();
   heroScroll();
   // Split headlines start hidden; it's laid out and revealed once the web fonts are in
-  // (capped at 1.2s), so the font swap happens while it's invisible and nothing on screen moves.
-  fontsSettled(1200).then(() => {
+  // (capped at 2s), so the font swap happens while it's invisible and nothing on screen moves.
+  fontsSettled(2000).then(() => {
     const own = splits.filter((el) => isIntro(el));
     own.forEach(splitWords);
     const words = own.flatMap((el) => $$(".lp-w", el));
