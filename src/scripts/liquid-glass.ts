@@ -201,10 +201,10 @@ const PAD = 2;
 const pixelScale = (w: number, h: number) => (w * h > 250_000 ? 0.5 : Math.min(Math.max(devicePixelRatio || 1, 1), 2));
 
 /** Paints the displacement field and the rim-light overlay. The expensive per-pixel pass. */
-function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dark: boolean): { field: string; overlay: string } | null {
+function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dark: boolean): { field: string; overlay: HTMLCanvasElement } | null {
   const hw = w / 2, hh = h / 2, p = outline.extent;
   const bz = Math.max(1, Math.min(bezel, hw, hh));
-  const paint = (isField: boolean): string => {
+  const paint = (isField: boolean): HTMLCanvasElement | null => {
     const cw = isField ? w : w + PAD * 2, ch = isField ? h : h + PAD * 2;
     const k = pixelScale(cw, ch);
     const width = Math.max(1, Math.round(cw * k)), height = Math.max(1, Math.round(ch * k));
@@ -212,7 +212,7 @@ function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dar
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return "";
+    if (!ctx) return null;
     const img = ctx.createImageData(width, height);
     const data = img.data;
     for (let j = 0; j < height; j++) {
@@ -261,12 +261,12 @@ function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dar
       }
     }
     ctx.putImageData(img, 0, 0);
-    return canvas.toDataURL("image/png");
+    return canvas;
   };
   try {
     const field = paint(true);
     const overlay = paint(false);
-    return field && overlay ? { field, overlay } : null;
+    return field && overlay ? { field: field.toDataURL("image/png"), overlay } : null;
   } catch {
     return null;
   }
@@ -311,7 +311,8 @@ function enhance(el: HTMLElement) {
   if (!lens) return;
   const opts = PRESETS[el.dataset.glass ?? ""] ?? PRESETS.chip;
   const id = `lg-${++uid}`;
-  const rim = document.createElement("span");
+  // The rim is a canvas, not a background image: images count as LCP candidates, canvases don't.
+  const rim = document.createElement("canvas");
   rim.className = "glass-rim";
   rim.setAttribute("aria-hidden", "true");
   lens.after(rim);
@@ -333,7 +334,9 @@ function enhance(el: HTMLElement) {
     lens.style.setProperty("-webkit-backdrop-filter", backdrop);
     lens.style.filter = "none";
     lens.style.clipPath = outline.polygon;
-    rim.style.backgroundImage = `url(${planes.overlay})`;
+    rim.width = planes.overlay.width;
+    rim.height = planes.overlay.height;
+    rim.getContext("2d")?.drawImage(planes.overlay, 0, 0);
     el.dataset.liquid = "refract";
   };
 
