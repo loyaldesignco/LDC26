@@ -46,7 +46,7 @@ Projects and services are drag-to-order in the Studio.
 
 ## Before launch
 
-- **Adobe Fonts:** the site loads project `maf3dwv` with the JS embed (`BaseLayout.astro`). Make sure the project includes Neue Haas Grotesk Display (CSS name `neue-haas-grotesk-display`) and lists loyal.design and any preview domains. Override with `PUBLIC_TYPEKIT_KIT`. If it fails to load within 3s, headlines fall back to Helvetica Neue.
+- **Adobe Fonts:** web project `bfo4mcg` ("Loyal Web": Marlide Display Variable + Neue Haas Grotesk Display), loaded with the CSS embed, non-blocking, in `BaseLayout.astro`. The project must list loyal.design and any preview domains, with Font display set to swap. Until it loads, text sets in metric-matched local fallbacks (`global.css`) so nothing reflows.
 - **Contact form:** set `PUBLIC_FORM_ENDPOINT` (Formspree, Basin, etc). Without it the last step opens the visitor's email app.
 - **Copy to confirm:** Webflow FAQ prices ($18k, $30k to $60k), the budget ranges on /contact, and the About timeline came from the design draft.
 - **Bauhaus Desk Display** (menu face) is self-hosted: check the licence covers web use.

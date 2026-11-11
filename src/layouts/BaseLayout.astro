@@ -18,9 +18,9 @@ const { title, description = settings.description, image } = Astro.props;
 const fullTitle = title ? `${title} | ${settings.title}` : `${settings.title}, a New York design and Webflow studio`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
-// Adobe Fonts project (maf3dwv) that serves Neue Haas Grotesk Display. It must list the
-// production domain; anywhere it doesn't load, type falls back to Helvetica Neue.
-const typekit = (import.meta.env.PUBLIC_TYPEKIT_KIT as string | undefined) ?? "maf3dwv";
+// Adobe Fonts web project "Loyal Web" (CSS embed): Marlide Display Variable + Neue Haas Grotesk Display.
+// It must list the production domain; anywhere it doesn't load, the metric-matched fallbacks stand in.
+const typekit = "bfo4mcg";
 
 const site = Astro.site!.toString().replace(/\/$/, "");
 const norm = (u: string) => u.trim().replace(/^http:/, "https:").replace(/\/$/, "");
@@ -89,33 +89,9 @@ const orgSchema = {
     <meta name="twitter:card" content={image ? "summary_large_image" : "summary"} />
     <link rel="preconnect" href="https://use.typekit.net" crossorigin />
     <link rel="preconnect" href="https://p.typekit.net" crossorigin />
-    <!-- Adobe Fonts JS embed (maf3dwv is a JS kit; it has no CSS endpoint). Adds wf-loading / wf-active / wf-inactive to <html>; gives up after 3s and leaves the fallbacks. -->
-    <script is:inline define:vars={{ kitId: typekit }}>
-      (function (d) {
-        var config = { kitId: kitId, scriptTimeout: 3000, async: true },
-          h = d.documentElement,
-          t = setTimeout(function () {
-            h.className = h.className.replace(/\bwf-loading\b/g, "") + " wf-inactive";
-          }, config.scriptTimeout),
-          tk = d.createElement("script"),
-          f = false,
-          s = d.getElementsByTagName("script")[0],
-          a;
-        h.className += " wf-loading";
-        tk.src = "https://use.typekit.net/" + config.kitId + ".js";
-        tk.async = true;
-        tk.onload = tk.onreadystatechange = function () {
-          a = this.readyState;
-          if (f || (a && a != "complete" && a != "loaded")) return;
-          f = true;
-          clearTimeout(t);
-          try {
-            Typekit.load(config);
-          } catch (e) {}
-        };
-        s.parentNode.insertBefore(tk, s);
-      })(document);
-    </script>
+    <!-- Adobe Fonts CSS embed, loaded without blocking render; metric-matched fallbacks hold the layout until it lands. -->
+    <link rel="preload" as="style" href={`https://use.typekit.net/${typekit}.css`} onload="this.onload=null;this.rel='stylesheet'" />
+    <noscript><link rel="stylesheet" href={`https://use.typekit.net/${typekit}.css`} /></noscript>
     <slot name="head" />
     <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
   </head>
