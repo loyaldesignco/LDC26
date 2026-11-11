@@ -10,11 +10,11 @@ interface Props {
   title?: string;
   description?: string;
   image?: string;
-  /** "home" plays the counter preloader; every other page opens with the plum wipe. */
+  /** Every page opens with the plum wipe (the homepage counter preloader was removed for load speed). */
   intro?: "home" | "page";
 }
 const [settings, services] = await Promise.all([getSettings(), getServices()]);
-const { title, description = settings.description, image, intro = "page" } = Astro.props;
+const { title, description = settings.description, image } = Astro.props;
 const fullTitle = title ? `${title} | ${settings.title}` : `${settings.title}, a New York design and Webflow studio`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
@@ -122,22 +122,7 @@ const orgSchema = {
   <body>
     <a href="#main" class="btn btn-solid sr-only z-[400] focus:not-sr-only focus:fixed focus:left-4 focus:top-4">Skip to content</a>
 
-    {
-      intro === "home" ? (
-        <div id="lp-preloader" class="fixed inset-0 z-[100] flex flex-col justify-between bg-ink p-[clamp(20px,4vw,56px)]" aria-hidden="true">
-          <div class="flex items-center justify-between gap-4">
-            <img src="/brand/loyal-logotype-white.svg" alt="" class="h-[22px] w-auto" />
-            <span class="mono text-paper/50">[ Loyal Design Co. — NYC ]</span>
-          </div>
-          <div class="flex items-end justify-between gap-4">
-            <span class="mono text-paper/50">[ Loading ]</span>
-            <span id="lp-counter" class="inline-block h-[0.85em] w-[1.9em] overflow-hidden text-right text-[clamp(4rem,12vw,9rem)] font-bold leading-[0.85] tabular-nums">000</span>
-          </div>
-        </div>
-      ) : (
-        <div id="lp-wipe-in" aria-hidden="true" />
-      )
-    }
+    <div id="lp-wipe-in" aria-hidden="true" />
     <div id="lp-wipe" aria-hidden="true"></div>
     <div id="lp-cursor" aria-hidden="true"></div>
     <slot name="chrome" />
