@@ -13,7 +13,8 @@ const token = import.meta.env.SANITY_API_READ_TOKEN as string | undefined;
 
 /** Null when Sanity isn't configured — every query then serves fallback content. */
 export const client: SanityClient | null = projectId
-  ? createClient({ projectId, dataset, apiVersion, useCdn: !token, token, perspective: "published" })
+  // Builds read straight from the API, not the CDN, so a rebuild right after publishing never picks up a stale copy.
+  ? createClient({ projectId, dataset, apiVersion, useCdn: false, token, perspective: "published" })
   : null;
 
 const builder = projectId ? createImageUrlBuilder({ projectId, dataset }) : null;
