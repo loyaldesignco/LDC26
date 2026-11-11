@@ -559,8 +559,18 @@ function heroSlideshow() {
 /** Upgrades .glass surfaces to refracting liquid glass once the page is idle (Chromium only). */
 function glass() {
   if (!document.querySelector(".glass[data-glass]")) return;
-  const go = () => import("./liquid-glass").then(({ liquidGlass }) => liquidGlass()).catch(() => {});
-  addEventListener("load", () => ("requestIdleCallback" in window ? requestIdleCallback(go, { timeout: 4000 }) : setTimeout(go, 1500)), { once: true });
+  // Built on the visitor's first move or scroll (or after 10s): the frosted fallback shows
+  // until then, and the map painting stays out of the page-load window.
+  const evs = ["pointermove", "pointerdown", "keydown", "wheel", "touchstart", "scroll"] as const;
+  let done = false;
+  const go = () => {
+    if (done) return;
+    done = true;
+    evs.forEach((e) => removeEventListener(e, go));
+    import("./liquid-glass").then(({ liquidGlass }) => liquidGlass()).catch(() => {});
+  };
+  evs.forEach((e) => addEventListener(e, go, { once: true, passive: true }));
+  setTimeout(go, 10000);
 }
 
 function setNote(m?: { label: string; href: string; logo: string }) {
