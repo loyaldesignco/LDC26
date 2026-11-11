@@ -61,16 +61,16 @@ function init() {
   // task blocks the main thread for long while the page is loading.
   const splits = $$("[data-split]");
   intro();
+  blockReveals();
   smoothScroll();
   heroScroll();
-  // Text that animates in starts hidden; it's laid out and revealed once the web fonts are in
+  // Split headlines start hidden; it's laid out and revealed once the web fonts are in
   // (capped at 1.2s), so the font swap happens while it's invisible and nothing on screen moves.
   fontsSettled(1200).then(() => {
     const own = splits.filter((el) => isIntro(el));
     own.forEach(splitWords);
     const words = own.flatMap((el) => $$(".lp-w", el));
     if (words.length) gsap.to(words, { y: 0, rotate: 0, duration: 1.5, ease: "expo.out", stagger: { each: 0.06, ease: "power1.in" } });
-    blockReveals();
     setTimeout(run, 0);
   });
   const later: (() => void)[] = [
