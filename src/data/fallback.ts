@@ -31,7 +31,7 @@ export const settings: SiteSettings = {
   socials: [
     { label: "Instagram", url: "https://www.instagram.com/loyaldesignco" },
     { label: "Behance", url: "https://www.behance.net/brianpunger" },
-    { label: "Dribbble", url: "https://dribbble.com/loyal-design-co" },
+    { label: "Dribbble", url: "https://dribbble.com/loyaldesignco" },
   ],
   credentials: ["Webflow Certified Partner", "Est. 2011, New York"],
   sameAs: [
