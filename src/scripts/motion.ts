@@ -214,6 +214,7 @@ function underlayNav() {
   if (reduced) {
     toggleMenu = (fast) => {
       setState(fast ? false : !menuOpen);
+      gsap.set(menu, { visibility: menuOpen ? "visible" : "hidden" });
       gsap.set([main, overlay], { x: menuOpen ? offset() : 0 });
       gsap.set(overlay, { visibility: menuOpen ? "visible" : "hidden", pointerEvents: menuOpen ? "auto" : "none" });
       gsap.set(dark, { autoAlpha: menuOpen ? 1 : 0 });
@@ -227,7 +228,8 @@ function underlayNav() {
     gsap.set(rows[1], { yPercent: 100 });
     gsap.set(corners, { scale: 0 });
     const tl = gsap.timeline({ paused: true, defaults: { ease: "energy" } });
-    tl.set(overlay, { visibility: "visible", pointerEvents: "auto" }, 0)
+    tl.set([overlay, menu], { visibility: "visible" }, 0)
+      .set(overlay, { pointerEvents: "auto" }, 0)
       .to([main, overlay], { x: offset, duration: 0.7 }, 0)
       .to(dark, { autoAlpha: 1, duration: 0.5 }, 0)
       .to(corners, { scale: 1, duration: 0.5 }, 0)
@@ -251,6 +253,7 @@ function underlayNav() {
       .to(bars, { y: 0, rotation: 0, duration: 0.25, ease: "power3.in" }, "<")
       .to(meta, { autoAlpha: 1, duration: 0.3 }, "<")
       .set(overlay, { visibility: "hidden", pointerEvents: "none" })
+      .set(menu, { visibility: "hidden" })
       // A transform left on the page wrapper breaks every position:fixed child inside it.
       .set(main, { clearProps: "transform" });
 

@@ -378,6 +378,8 @@ html:not(.motion) #lp-wipe-in, html:not(.motion) #lp-preloader { display: none; 
 [data-main] { position: relative; z-index: 2; background: var(--ink); }
 [data-underlay-nav-overlay] { position: fixed; inset: 0 -1px 0 0; z-index: 100; pointer-events: none; cursor: pointer; visibility: hidden; overflow: clip; }
 html:not(.js) [data-underlay-nav-menu] { display: none; }
+/* Closed menu stays out of rendering (it sits behind the page), so its font swap can't register as layout shift. */
+html.js [data-underlay-nav-menu] { visibility: hidden; }
 html:not(.js) [data-underlay-nav-menu]:target { display: block; z-index: 300; }
 
 .menu-link {
@@ -389,6 +391,10 @@ html:not(.js) [data-underlay-nav-menu]:target { display: block; z-index: 300; }
   line-height: 1.02;
   letter-spacing: -0.01em;
   text-transform: uppercase;
+}
+/* Phones: size to the 80vw drawer (less its 2rem side padding) so the longest word, "Services.", fits. */
+@media (max-width: 767px) {
+  .menu-link { font-size: clamp(1.6rem, calc((80vw - 4rem) / 6.8), 3.6rem); }
 }
 .menu-sub { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: rgb(249 246 240 / 0.55); }
 
