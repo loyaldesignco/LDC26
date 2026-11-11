@@ -251,6 +251,13 @@ html.lenis, html.lenis body { height: auto; }
     background-position: 100% 0;
   }
   .glass > .glass-body { position: relative; z-index: 3; }
+  /* Liquid glass (src/scripts/liquid-glass.ts): on Chromium the lens refracts the backdrop through
+     a squircle displacement map and .glass-rim paints the specular edge; the frost above stays the
+     fallback everywhere else. */
+  .glass > .glass-rim { position: absolute; inset: -2px; z-index: 2; pointer-events: none; background: no-repeat 0 0 / 100% 100%; }
+  .glass[data-liquid="refract"] > .glass-tint { background: rgb(255 255 255 / 0.06); }
+  .glass[data-liquid="refract"] > .glass-edge { opacity: 0; }
+  .glass[data-liquid="refract"] { box-shadow: 0 2px 8px rgb(0 0 0 / 0.1), 0 8px 24px -6px rgb(0 0 0 / 0.16); }
 
   /* Client logos: cream through the logo's own alpha, brand gradient sweeps through on hover. */
   .client-logo {

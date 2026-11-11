@@ -35,7 +35,7 @@ const heroSizes = "max(120vw, 92vh)";
 
 <BaseLayout intro="home">
   <Fragment slot="head">
-    {first && <link rel="preload" as="image" href={src(first.image, 1280)} imagesrcset={srcset(first.image)} imagesizes={heroSizes} fetchpriority="high" />}
+    {first && <link rel="preload" as="image" href={src(first.image, 1200, undefined, 65)} imagesrcset={srcset(first.image, 2400, 65)} imagesizes={heroSizes} fetchpriority="high" />}
   </Fragment>
 
   <nav slot="chrome" data-chapter-rail aria-hidden="true" class="pointer-events-none fixed left-[clamp(10px,1.4vw,20px)] top-1/2 z-40 -translate-y-1/2 flex-col gap-[15px]">
@@ -44,7 +44,7 @@ const heroSizes = "max(120vw, 92vh)";
 
   <!-- 00 Hero -->
   <section id="top" data-hero class="lp-hero relative flex min-h-[115svh] flex-col overflow-clip bg-plum">
-    {first && <img data-parallax-img src={src(first.image, 1280)} srcset={srcset(first.image)} sizes={heroSizes} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
+    {first && <img data-parallax-img src={src(first.image, 1200, undefined, 65)} srcset={srcset(first.image, 2400, 65)} sizes={heroSizes} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
     {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 1920)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
     <div class="wash"></div>
     <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
@@ -101,7 +101,7 @@ const heroSizes = "max(120vw, 92vh)";
             </div>
           )
         }
-        <div data-glass-banner class="glass mx-auto mb-[clamp(32px,6vh,72px)] mt-11 w-[90%] rounded-3xl">
+        <div data-glass-banner data-glass="banner" class="glass mx-auto mb-[clamp(32px,6vh,72px)] mt-11 w-[90%] rounded-3xl">
           <div class="glass-blur"></div><div class="glass-tint"></div><div class="glass-edge"></div><div class="glass-sheen" data-glass-sheen></div>
           <div class="glass-body lp-banner-items flex flex-wrap items-baseline justify-around gap-[clamp(20px,4vw,48px)] px-[clamp(20px,3vw,48px)] py-[clamp(28px,4vw,56px)]">
             {counts.map((c) => (
@@ -135,7 +135,7 @@ const heroSizes = "max(120vw, 92vh)";
           {i === 0 && (
             <>
               <span class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.5)_0%,rgba(10,10,10,0)_55%)]" />
-              <a href="/work" data-roll-host class="glass absolute bottom-[clamp(16px,2.4vw,40px)] left-[clamp(16px,2.4vw,40px)] z-[3] block rounded-[20px]">
+              <a href="/work" data-roll-host data-glass="chip" class="glass absolute bottom-[clamp(16px,2.4vw,40px)] left-[clamp(16px,2.4vw,40px)] z-[3] block rounded-[20px]">
                 <span class="glass-blur" /><span class="glass-tint" /><span class="glass-edge" /><span class="glass-sheen" data-glass-sheen />
                 <span class="glass-body block px-[clamp(22px,2.6vw,40px)] py-[clamp(16px,1.8vw,28px)]">
                   <span class="block text-[clamp(0.85rem,1.1vw,1.05rem)] tracking-[-0.01em] text-paper/90">Latest</span>

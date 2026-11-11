@@ -68,6 +68,7 @@ function init() {
   parallax();
   heroScroll();
   heroSlideshow();
+  glass();
   refreshes();
   revealFailsafe();
 }
@@ -541,6 +542,13 @@ function heroSlideshow() {
   };
   evs.forEach((e) => addEventListener(e, start, { once: true, passive: true }));
   setTimeout(start, 15000);
+}
+
+/** Upgrades .glass surfaces to refracting liquid glass once the page is idle (Chromium only). */
+function glass() {
+  if (!document.querySelector(".glass[data-glass]")) return;
+  const go = () => import("./liquid-glass").then(({ liquidGlass }) => liquidGlass()).catch(() => {});
+  addEventListener("load", () => ("requestIdleCallback" in window ? requestIdleCallback(go, { timeout: 4000 }) : setTimeout(go, 1500)), { once: true });
 }
 
 function setNote(m?: { label: string; href: string; logo: string }) {
