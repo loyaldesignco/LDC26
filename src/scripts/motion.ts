@@ -458,6 +458,7 @@ function observe(el: Element, fn: (el: Element, instant: boolean) => void) {
 
 /** True when an element starts below the opening view; only those get scroll-linked reveals. */
 const belowFold = (el: Element) => el.getBoundingClientRect().top > innerHeight * 0.92;
+// Every scrubbed reveal starts at that same 92% line, so at load nothing sits half-faded (contrast checks read it as faint text).
 
 /** Ties a reveal to the scrollbar: it plays forward as the element rises into view and rewinds on the way back. */
 function scrubbed(el: Element, start = "top 92%", end = "top 55%") {
@@ -471,7 +472,7 @@ function reveals() {
     if (el.hasAttribute("data-letters")) {
       const letters = $$(".lp-l", el);
       if (belowFold(el))
-        gsap.fromTo(letters, { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, ease: "power1.out", stagger: { amount: 0.9, from: "random" }, scrollTrigger: scrubbed(el, "top 95%", "top 45%") });
+        gsap.fromTo(letters, { opacity: 0, yPercent: 35 }, { opacity: 1, yPercent: 0, ease: "power1.out", stagger: { amount: 0.9, from: "random" }, scrollTrigger: scrubbed(el, "top 92%", "top 45%") });
       else observe(el, (_, now) => gsap.to(letters, { opacity: 1, duration: now ? 0 : 1, ease: "power2.out", stagger: now ? 0 : { amount: 0.6, from: "random" } }));
       return;
     }
@@ -486,7 +487,7 @@ function blockReveals() {
   $$("[data-reveal]").forEach((el) => {
     if (el.closest("#top")) return;
     // Content in the opening view fades in on load (it may be the LCP); everything below rides the scroll.
-    if (belowFold(el)) gsap.fromTo(el, { opacity: 0, y: 56 }, { opacity: 1, y: 0, ease: "power1.out", scrollTrigger: scrubbed(el, "top 98%", "top 72%") });
+    if (belowFold(el)) gsap.fromTo(el, { opacity: 0, y: 56 }, { opacity: 1, y: 0, ease: "power1.out", scrollTrigger: scrubbed(el, "top 92%", "top 66%") });
     else observe(el, (t, now) => gsap.to(t, { opacity: 1, y: 0, duration: now ? 0 : 1.6, ease: "expo.out" }));
   });
 }
