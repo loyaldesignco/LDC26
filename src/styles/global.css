@@ -4,7 +4,7 @@
  * editorial work grid, case study, service, about and contact pages).
  *
  * Dark ink page, cream type, a warm orange → pink → brick gradient used only on
- * interaction, mono bracketed micro labels, Instrument Serif accent words.
+ * interaction, mono bracketed micro labels, Marlide accent words.
  */
 @import "tailwindcss";
 
@@ -13,6 +13,26 @@
   src: url("/fonts/BauhausDeskDisplay-Medium.woff2") format("woff2"), url("/fonts/BauhausDeskDisplay-Medium.otf") format("opentype");
   font-weight: 500;
   font-display: swap;
+}
+
+/* Metric-matched fallbacks: while Adobe Fonts loads, text sets in a local face scaled to the
+   web font's width and line metrics, so nothing reflows (CLS) when the real font swaps in.
+   Ratios measured against marlide-display-variable and neue-haas-grotesk-display. */
+@font-face {
+  font-family: "Marlide Fallback";
+  src: local("Times New Roman"), local("Times"), local("Liberation Serif");
+  size-adjust: 79.6%;
+  ascent-override: 107%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+@font-face {
+  font-family: "Neue Haas Fallback";
+  src: local("Arial"), local("Helvetica"), local("Liberation Sans");
+  size-adjust: 93.3%;
+  ascent-override: 93%;
+  descent-override: 25%;
+  line-gap-override: 0%;
 }
 
 :root {
@@ -33,9 +53,9 @@
   --gutter: clamp(20px, 4.5vw, 72px);
   --menu-width: 30em;
 
-  --sans: "neue-haas-grotesk-display", "Neue Haas Grotesk Display Pro", "neue-haas-grotesk-text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --sans: "neue-haas-grotesk-display", "Neue Haas Grotesk Display Pro", "Neue Haas Fallback", "Helvetica Neue", Helvetica, Arial, sans-serif;
   --mono: "Space Mono", ui-monospace, "SF Mono", Menlo, monospace;
-  --serif: "marlide-display-variable", "Marlide Display Variable", "Instrument Serif", Georgia, serif;
+  --serif: "marlide-display-variable", "Marlide Display Variable", "Marlide Fallback", Georgia, serif;
   --menu: "Bauhaus Desk Display", var(--sans);
 }
 @media (max-width: 767px) {

@@ -1,7 +1,7 @@
 ---
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { byNewest, categoriesOf, getProjects, WORK_CATEGORIES } from "@/lib/sanity";
-import { logoUrl, src } from "@/lib/media";
+import { logoUrl, src, srcset } from "@/lib/media";
 
 const projects = byNewest(await getProjects());
 const filters = ["All", ...WORK_CATEGORIES.filter((c) => projects.some((p) => categoriesOf(p).includes(c)))];
@@ -10,7 +10,8 @@ const items = projects.map((p) => ({
   title: p.title,
   year: p.launched ? String(p.launched) : "",
   cats: categoriesOf(p),
-  img: src(p.cover, 1400),
+  img: src(p.cover, 1200),
+  imgSet: srcset(p.cover, 1680),
   logo: logoUrl(p.logo),
   hasBody: Boolean(p.body?.length || p.gallery?.length),
 }));
@@ -76,7 +77,7 @@ const sorts = [
           <article class="lp-ed-card" data-item data-slug={p.slug} data-title={p.title} data-year={p.year} data-cats={p.cats.join("|")} style={`grid-column:${rhythm(i).col};margin-top:${rhythm(i).top}`}>
             <a href={`/work/${p.slug}`} class="block">
               <div class="frame rounded-[14px]" data-ratio style={`aspect-ratio:${rhythm(i).ratio}`}>
-                {p.img && <img class="lp-ed-base frame-media" src={p.img} alt="" loading={i < 2 ? "eager" : "lazy"} />}
+                {p.img && <img class="lp-ed-base frame-media" src={p.img} srcset={p.imgSet} sizes="(max-width: 900px) 100vw, 50vw" alt="" loading={i < 2 ? "eager" : "lazy"} fetchpriority={i === 0 ? "high" : undefined} decoding={i < 2 ? undefined : "async"} />}
                 <div class="lp-ed-wash pointer-events-none absolute inset-0" />
                 <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_top,rgba(10,10,10,0.72)_0%,rgba(10,10,10,0)_52%)]" />
                 {p.logo && <div class="lp-ed-logo pointer-events-none absolute left-1/2 top-1/2 h-[34%] w-[min(42%,190px)] -translate-x-1/2 -translate-y-1/2 bg-contain bg-center bg-no-repeat opacity-90 brightness-0 invert" style={`background-image:url('${p.logo}')`} aria-hidden="true" />}
