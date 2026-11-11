@@ -201,10 +201,13 @@ const PAD = 2;
 const pixelScale = (w: number, h: number) => (w * h > 250_000 ? 0.5 : Math.min(Math.max(devicePixelRatio || 1, 1), 2));
 
 /** Paints the displacement field and the rim-light overlay. The expensive per-pixel pass. */
-function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dark: boolean): { field: string; overlay: HTMLCanvasElement } | null {
+/** Gives the main thread back between slices so painting never becomes a long task. */
+const yieldToMain = () => new Promise<void>((r) => setTimeout(r, 0));
+
+async function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dark: boolean): Promise<{ field: string; overlay: HTMLCanvasElement } | null> {
   const hw = w / 2, hh = h / 2, p = outline.extent;
   const bz = Math.max(1, Math.min(bezel, hw, hh));
-  const paint = (isField: boolean): HTMLCanvasElement | null => {
+  const paint = async (isField: boolean): Promise<HTMLCanvasElement | null> => {
     const cw = isField ? w : w + PAD * 2, ch = isField ? h : h + PAD * 2;
     const k = pixelScale(cw, ch);
     const width = Math.max(1, Math.round(cw * k)), height = Math.max(1, Math.round(ch * k));
@@ -215,7 +218,9 @@ function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dar
     if (!ctx) return null;
     const img = ctx.createImageData(width, height);
     const data = img.data;
+    let slice = performance.now();
     for (let j = 0; j < height; j++) {
+      if (performance.now() - slice > 12) { await yieldToMain(); slice = performance.now(); }
       const py = (j + 0.5) / k - ch / 2;
       for (let i = 0; i < width; i++) {
         const px = (i + 0.5) / k - cw / 2;
@@ -264,8 +269,8 @@ function renderPlanes(w: number, h: number, outline: Outline, bezel: number, dar
     return canvas;
   };
   try {
-    const field = paint(true);
-    const overlay = paint(false);
+    const field = await paint(true);
+    const overlay = await paint(false);
     return field && overlay ? { field: field.toDataURL("image/png"), overlay } : null;
   } catch {
     return null;
@@ -318,7 +323,7 @@ function enhance(el: HTMLElement) {
   lens.after(rim);
 
   let last = "";
-  const build = () => {
+  const build = async () => {
     const w = Math.round(el.offsetWidth), h = Math.round(el.offsetHeight);
     if (w < 8 || h < 8) return;
     const radius = Math.round(Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius) || 0, w / 2, h / 2));
@@ -326,7 +331,7 @@ function enhance(el: HTMLElement) {
     if (key === last) return;
     last = key;
     const outline = squircleOutline(w, h, radius);
-    const planes = renderPlanes(w, h, outline, opts.bezel ?? Math.min(32, Math.min(w, h) / 2), opts.appearance === "dark");
+    const planes = await renderPlanes(w, h, outline, opts.bezel ?? Math.min(32, Math.min(w, h) / 2), opts.appearance === "dark");
     if (!planes) return;
     setFilter(id, w, h, planes.field, opts);
     const backdrop = `url(#${id}) blur(${opts.blur}px)`;
@@ -344,9 +349,9 @@ function enhance(el: HTMLElement) {
   let t = 0;
   new ResizeObserver(() => {
     clearTimeout(t);
-    t = window.setTimeout(() => requestIdleCallback?.(build, { timeout: 500 }) ?? build(), 160);
+    t = window.setTimeout(() => void build(), 160);
   }).observe(el);
-  build();
+  void build();
 }
 
 export function liquidGlass(root: ParentNode = document) {

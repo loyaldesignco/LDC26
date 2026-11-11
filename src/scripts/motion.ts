@@ -57,20 +57,32 @@ function init() {
     return;
   }
 
-  smoothScroll();
-  cursor();
-  anchorWipe();
-  $$("[data-split]").forEach(splitWords);
+  // Above-the-fold work runs now; everything else is queued in small slices so no single
+  // task blocks the main thread for long while the page is loading.
+  const splits = $$("[data-split]");
+  splits.filter((el) => isIntro(el)).forEach(splitWords);
   intro();
-  reveals();
-  serviceStack();
-  marquee();
-  parallax();
+  smoothScroll();
   heroScroll();
-  heroSlideshow();
-  glass();
-  refreshes();
-  revealFailsafe();
+  const later: (() => void)[] = [
+    cursor,
+    anchorWipe,
+    ...splits.filter((el) => !isIntro(el)).map((el) => () => splitWords(el)),
+    reveals,
+    serviceStack,
+    marquee,
+    parallax,
+    heroSlideshow,
+    glass,
+    refreshes,
+    revealFailsafe,
+  ];
+  const run = () => {
+    const end = performance.now() + 12;
+    while (later.length && performance.now() < end) later.shift()!();
+    if (later.length) setTimeout(run, 0);
+  };
+  setTimeout(run, 0);
 }
 
 /* ---------------------------------------------------------------- scroll */
