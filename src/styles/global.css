@@ -112,10 +112,13 @@ html.lenis, html.lenis body { height: auto; }
     letter-spacing: 0.07em;
     text-transform: uppercase;
     color: rgb(249 246 240 / 0.58);
+    line-height: 1.48;
   }
   .mono {
     font-family: var(--mono);
     font-size: 0.68rem;
+    /* Space Mono's own "normal" line height, pinned so the row doesn't resize when the font swaps in. */
+    line-height: 1.48;
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
