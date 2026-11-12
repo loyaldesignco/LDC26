@@ -12,7 +12,7 @@
  *
  * GET returns a health check that says whether those are configured, without revealing them.
  */
-import { SITES, type SiteConfig } from "./_sites";
+import { SITES, type SiteConfig } from "./_sites.js";
 
 /** Fields the service uses itself; everything else in the form goes into the email. */
 const META = new Set(["site", "_gotcha", "_subject", "g-recaptcha-response", "_redirect"]);
