@@ -200,12 +200,14 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
     try {
       const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
       if (!res.ok) {
-        console.warn("Contact form:", res.status, await res.text().catch(() => ""));
-        throw new Error(String(res.status));
+        const body = await res.json().catch(() => ({}));
+        console.warn("Contact form:", res.status, body);
+        throw new Error(body.reason || `HTTP ${res.status}`);
       }
       return true;
-    } catch {
-      error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there.`;
+    } catch (e) {
+      // TEMP: show the server's reason while the Postmark setup is verified.
+      error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there. [${(e as Error).message}]`;
       nextBtn.textContent = steps[step].next;
       return false;
     } finally {
