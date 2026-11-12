@@ -102,7 +102,10 @@ export async function POST(request: Request) {
 
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null;
   const captcha = await verifyRecaptcha(site, fields.get("g-recaptcha-response"), ip);
-  if (captcha) return json({ ok: false, error: "Spam check failed" }, 422, origin);
+  if (captcha) {
+    console.warn("forms: spam check failed", siteKey, captcha);
+    return json({ ok: false, error: "Spam check failed", reason: captcha.replace(/\s*\(.*$/, "") }, 422, origin);
+  }
 
   const token = process.env[site.postmarkTokenEnv ?? "POSTMARK_SERVER_TOKEN"];
   if (!token) return json({ ok: false, error: "Email service not configured" }, 503, origin);
