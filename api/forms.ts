@@ -136,8 +136,10 @@ export async function POST(request: Request) {
     }),
   });
   if (!res.ok) {
-    console.error("postmark", res.status, await res.text());
-    return json({ ok: false, error: "Email failed to send" }, 502, origin);
+    const body = (await res.json().catch(() => ({}))) as { ErrorCode?: number; Message?: string };
+    console.error("forms: postmark", res.status, body);
+    // Postmark's code and message (e.g. 412 while the account awaits approval) help diagnose; they hold no secrets.
+    return json({ ok: false, error: "Email failed to send", reason: `postmark ${body.ErrorCode ?? res.status}: ${body.Message ?? ""}`.trim() }, 502, origin);
   }
   return json({ ok: true }, 200, origin);
 }

@@ -199,7 +199,10 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
     nextBtn.textContent = "Sending…";
     try {
       const res = await fetch(endpoint, { method: "POST", body: data, headers: { Accept: "application/json" } });
-      if (!res.ok) throw new Error(String(res.status));
+      if (!res.ok) {
+        console.warn("Contact form:", res.status, await res.text().catch(() => ""));
+        throw new Error(String(res.status));
+      }
       return true;
     } catch {
       error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there.`;
