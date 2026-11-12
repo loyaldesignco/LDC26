@@ -1,8 +1,12 @@
 /**
  * Sites the shared forms service accepts submissions from.
  *
+ * Form mail is sent from notify.loyal.design (verified in Postmark), kept apart from the domain used for
+ * everyday email. Client sites can send from it too ("<Client> website <forms@notify.loyal.design>"),
+ * so a new site needs no DNS changes on the client's domain.
+ *
  * To add a client site:
- *   1. Verify its sending domain in Postmark (Sender Signatures → Domains: DKIM + Return-Path DNS records).
+ *   1. (Optional) To send from the client's own domain instead, verify it in Postmark first.
  *   2. Add its domain to the reCAPTCHA v3 key's domain list (or give it its own key, see `recaptchaSecretEnv`).
  *   3. Add an entry below, then point the site's form at https://www.loyal.design/api/forms with a hidden
  *      `site` field set to the entry's key.
@@ -31,7 +35,7 @@ export const SITES: Record<string, SiteConfig> = {
     name: "Loyal Design Co.",
     origins: ["https://www.loyal.design", "https://loyal.design"],
     to: ["hello@loyal.design"],
-    from: "Loyal Design Co. <hello@loyal.design>",
+    from: "Loyal Design Co. website <forms@notify.loyal.design>",
     subject: "New project inquiry: {company}{name}",
   },
 };

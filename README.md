@@ -47,7 +47,7 @@ Projects and services are drag-to-order in the Studio.
 ## Before launch
 
 - **Adobe Fonts:** web project `bfo4mcg` ("Loyal Web": Marlide Display Variable + Neue Haas Grotesk Display), loaded with the CSS embed, non-blocking, in `BaseLayout.astro`. The project must list loyal.design and any preview domains, with Font display set to swap. Until it loads, text sets in metric-matched local fallbacks (`global.css`) so nothing reflows.
-- **Contact form:** set `PUBLIC_FORM_ENDPOINT` (Formspree, Basin, etc). Without it the last step opens the visitor's email app.
+- **Contact form:** posts to the shared forms service at `/api/forms` (`api/forms.ts`), which checks the honeypot and reCAPTCHA v3 and emails the submission through Postmark from `forms@notify.loyal.design`. Needs `POSTMARK_SERVER_TOKEN` and `RECAPTCHA_SECRET` in Vercel; `GET /api/forms` reports whether they're set. Client sites can use the same service: add them in `api/_sites.ts`. `PUBLIC_FORM_ENDPOINT` overrides the endpoint; an empty value makes the last step open the visitor's email app.
 - **Copy to confirm:** Webflow FAQ prices ($18k, $30k to $60k), the budget ranges on /contact, and the About timeline came from the design draft.
 - **Bauhaus Desk Display** (menu face) is self-hosted: check the licence covers web use.
 - **Years** for Fighters Market and Brandon James Construction aren't recorded, so they sort last.

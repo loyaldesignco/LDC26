@@ -3,8 +3,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getSettings } from "@/lib/sanity";
 
 const settings = await getSettings();
-// Formspree form "loyal.design contact". Set PUBLIC_FORM_ENDPOINT to an empty string to fall back to the visitor's email app.
-const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? "https://formspree.io/f/mzerprgn";
+// Set PUBLIC_FORM_ENDPOINT to an empty string to fall back to the visitor's email app.
+// Shared forms service (api/forms.ts → Postmark). The hidden `site` field picks this site's settings in api/_sites.ts.
+const endpoint = (import.meta.env.PUBLIC_FORM_ENDPOINT as string | undefined) ?? "/api/forms";
 // Google reCAPTCHA v3 site key (public). The matching secret lives in Formspree's form settings.
 const recaptchaKey = (import.meta.env.PUBLIC_RECAPTCHA_SITE_KEY as string | undefined) ?? "6LfBZxouAAAAAD0_hBnghwU2YtQe4kdTR_2k8m8Z";
 const instagram = settings.socials.find((s) => /instagram/i.test(s.label));
@@ -76,7 +77,7 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
       <form method="post" action={endpoint || undefined} data-endpoint={endpoint || ""} data-email={settings.email} data-recaptcha={recaptchaKey} class="grid gap-5" novalidate data-contact-form>
         <!-- Spam trap: people never see or fill this; bots do, and Formspree drops those. -->
         <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" class="absolute -left-[9999px] size-px opacity-0" />
-        <input type="hidden" name="_subject" value="New project inquiry, loyal.design" />
+        <input type="hidden" name="site" value="loyal-design" />
         <fieldset data-step class="m-0 grid gap-5 border-0 p-0">
           <legend class="sr-only">Contact</legend>
           <label class="field"><span>Full name</span><input name="name" autocomplete="name" placeholder="Alex Morgan" required /></label>
@@ -184,7 +185,7 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
         await loadRecaptcha();
         data.set("g-recaptcha-response", await (window as any).grecaptcha.execute(siteKey, { action: "submit" }));
       } catch {
-        /* Formspree will answer with an error, handled below */
+        /* the service rejects a missing token; handled below */
       }
     }
     if (!endpoint) {
