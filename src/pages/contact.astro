@@ -136,6 +136,7 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
     const s = sent ? { ...done, next: "Send another" } : steps[step];
     q("[data-step-label]").textContent = s.label;
     heading.textContent = s.heading;
+    heading.classList.toggle("grad-text", sent); // the thank-you headline takes the brand gradient
     q("[data-step-blurb]").textContent = s.blurb;
     sets.forEach((f, i) => (f.hidden = sent || i !== step));
     dots.forEach((d, i) => {
@@ -205,9 +206,8 @@ const timelines = ["Under 6 weeks", "6–12 weeks", "3–6 months", "Flexible"];
         throw new Error(body.reason || `HTTP ${res.status}`);
       }
       return true;
-    } catch (e) {
-      // TEMP: show the server's reason while the Postmark setup is verified.
-      error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there. [${(e as Error).message}]`;
+    } catch {
+      error.textContent = `That didn't send. Email ${form.dataset.email} and we'll pick it up from there.`;
       nextBtn.textContent = steps[step].next;
       return false;
     } finally {
