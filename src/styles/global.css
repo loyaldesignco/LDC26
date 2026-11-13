@@ -545,16 +545,6 @@ details.lp-acc:hover { background: rgb(249 246 240 / 0.03); }
 .motion [data-letters] .lp-w { transform: none; }
 .motion [data-letters] .lp-l { opacity: 0; }
 
-/* Sheets (home): each data-sheet section slides up over the one before it, which holds still at its
-   bottom edge, dims and recedes. One ink background throughout, so the only visible edge is the sheet's
-   rounded top. Positioning (sticky + z-order) is set by sheets() in motion.ts, only when motion is on. */
-:root { --sheet-r: clamp(20px, 2.6vw, 40px); }
-.motion main > section { position: relative; } /* z-order only applies to positioned sections */
-.motion main > section:not(#top) { background-color: var(--ink); }
-.motion main > [data-sheet] { border-radius: var(--sheet-r) var(--sheet-r) 0 0; margin-top: calc(var(--sheet-r) * -1); box-shadow: 0 -30px 60px -24px rgb(0 0 0 / 0.6); }
-.lp-stuck::after { content: ""; position: absolute; inset: 0; z-index: 60; background: var(--ink); opacity: var(--dim, 0); pointer-events: none; border-radius: inherit; }
-.motion main > [data-sheet].lp-stuck, .motion main > [data-sheet] { overflow: clip; }
-
 /* Featured work: each card sticks a little lower than the last, and shrinks back as the next slides over it. */
 .lp-cases { display: flex; flex-direction: column; gap: clamp(16px, 2vw, 28px); }
 .lp-case { position: sticky; top: calc(clamp(72px, 7vw, 104px) + var(--i) * clamp(10px, 1.1vw, 18px)); height: clamp(440px, 74svh, 880px); }

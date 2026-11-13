@@ -45,14 +45,11 @@ const heroSizes = "max(120vw, 92vh)";
   </nav>
 
   <!-- 00 Hero -->
-  <section id="top" data-hero class="lp-hero relative flex min-h-[115svh] flex-col overflow-clip bg-ink">
-    <!-- Photo layers: as the next section slides over, this clips down into a rounded card. -->
-    <div data-hero-media class="absolute inset-0">
-      {first && <img data-parallax-img src={src(first.image, 1200, undefined, 65)} srcset={srcset(first.image, 2400, 65)} sizes={heroSizes} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
-      {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 1920)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
-      <div class="wash"></div>
-      <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
-    </div>
+  <section id="top" data-hero class="lp-hero relative flex min-h-[115svh] flex-col overflow-clip bg-plum">
+    {first && <img data-parallax-img src={src(first.image, 1200, undefined, 65)} srcset={srcset(first.image, 2400, 65)} sizes={heroSizes} alt="" class="absolute inset-0 size-full scale-[1.2] object-cover object-[center_22%] will-change-transform" fetchpriority="high" />}
+    {slides.length > 1 && <canvas data-hero-canvas data-slides={JSON.stringify(slides.map((s) => src(s.image, 1920)))} data-meta={JSON.stringify(heroMeta)} class="pointer-events-none absolute inset-0 size-full scale-[1.2] opacity-0 transition-opacity duration-[1.2s] will-change-transform" aria-hidden="true" />}
+    <div class="wash"></div>
+    <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
 
     {
       settings.credentials.some((c) => /webflow/i.test(c)) && (
@@ -119,7 +116,7 @@ const heroSizes = "max(120vw, 92vh)";
   </section>
 
   <!-- 01 Studio -->
-  <section id="studio" data-chapter data-sheet class="gutter flex min-h-[86svh] flex-col justify-center py-[clamp(120px,12vw,220px)]">
+  <section id="studio" data-chapter class="gutter flex min-h-[72svh] flex-col justify-center pb-[clamp(56px,7vw,96px)] pt-[clamp(88px,13vw,190px)]">
     <p data-reveal class="eyebrow mb-[clamp(24px,4vw,48px)]">[ 01 ] &nbsp;The Short Version</p>
     <p data-split class="m-0 max-w-[26ch] text-[clamp(2rem,5.4vw,4.8rem)] font-bold leading-none tracking-[-0.035em]">A New York studio making brands people stay <em class="accent capitalize">loyal</em> to.</p>
     <p data-reveal class="lede mt-[clamp(28px,4vw,48px)] max-w-[54ch] !text-[1.13rem]">Since 2011 we've partnered with emerging and established businesses on identity, web and graphic design. Strategy first, craft always, no decoration for its own sake.</p>
@@ -157,7 +154,7 @@ const heroSizes = "max(120vw, 92vh)";
   <!-- 02b Featured work: sticky cards that stack as you scroll -->
   {
     cases.length > 0 && (
-      <section id="cases" data-sheet class="gutter pb-[clamp(96px,10vw,180px)] pt-[clamp(120px,12vw,220px)]" aria-label="Featured work">
+      <section id="cases" class="gutter pb-[clamp(64px,8vw,120px)] pt-[clamp(96px,12vw,170px)]" aria-label="Featured work">
         <div class="mb-[clamp(40px,6vw,88px)] flex flex-wrap items-end justify-between gap-6">
           <div>
             <p data-reveal class="eyebrow mb-4 text-paper/55">Featured Work</p>
@@ -191,13 +188,13 @@ const heroSizes = "max(120vw, 92vh)";
   }
 
   <!-- 03 Clients -->
-  <section id="clients" data-chapter class="gutter pb-[clamp(72px,8vw,140px)] pt-[clamp(24px,3vw,40px)]">
+  <section id="clients" data-chapter class="gutter border-t border-paper/12 pb-[clamp(34px,4.5vw,52px)] pt-[clamp(28px,4vw,44px)]">
     <p class="eyebrow mb-[clamp(20px,3vw,32px)]">[ 03 ] &nbsp;Selected Clients</p>
     <ClientMarquee clients={settings.clients} />
   </section>
 
   <!-- 04 Services -->
-  <section id="services" data-chapter data-sheet class="gutter pb-[clamp(96px,10vw,180px)] pt-[clamp(120px,12vw,220px)]">
+  <section id="services" data-chapter class="gutter border-t border-paper/12 pb-[clamp(64px,8vw,110px)] pt-[clamp(96px,12vw,170px)]">
     <p data-reveal class="eyebrow mb-4 text-paper/50">[ 04 ] &nbsp;Services</p>
     <h2 data-split data-letters class="display-l mb-[clamp(48px,7vw,96px)]">What we <em class="accent capitalize">do</em></h2>
     <div data-svc-list class="bleed flex flex-col border-b border-paper/14">
@@ -218,7 +215,7 @@ const heroSizes = "max(120vw, 92vh)";
   </section>
 
   <!-- 05 Process -->
-  <section id="process" data-chapter data-sheet class="relative flex min-h-[92svh] items-center overflow-hidden bg-ink">
+  <section id="process" data-chapter class="relative flex min-h-[82svh] items-center overflow-hidden bg-ink">
     {
       settings.processImage && (
         <div data-parallax class="absolute inset-0 overflow-hidden">
@@ -228,7 +225,7 @@ const heroSizes = "max(120vw, 92vh)";
     }
     <div class="wash"></div>
     <div class="pointer-events-none absolute inset-0 bg-ink/45"></div>
-    <div class="gutter relative w-full py-[clamp(120px,12vw,220px)]">
+    <div class="gutter relative w-full py-[clamp(64px,9vw,120px)]">
       <p data-reveal class="eyebrow mb-[clamp(32px,5vw,64px)] text-paper/60">[ 05 ] &nbsp;How We Work</p>
       <div data-reveal class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-[clamp(32px,5vw,72px)]">
         {
@@ -244,7 +241,7 @@ const heroSizes = "max(120vw, 92vh)";
   </section>
 
   <!-- 06 Contact -->
-  <section id="contact" data-chapter data-sheet class="gutter pb-[clamp(120px,12vw,220px)] pt-[clamp(120px,12vw,220px)]">
+  <section id="contact" data-chapter class="gutter pb-[clamp(80px,10vw,140px)] pt-[clamp(96px,12vw,170px)]">
     <div class="grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] items-end gap-[clamp(32px,6vw,88px)]">
       <div>
         <p class="eyebrow mb-4 text-paper/50">[ 06 ] &nbsp;Start a Project</p>

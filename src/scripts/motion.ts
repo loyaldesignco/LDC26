@@ -61,7 +61,6 @@ function init() {
   // task blocks the main thread for long while the page is loading.
   const splits = $$("[data-split]");
   intro();
-  sheets();
   blockReveals();
   smoothScroll();
   heroScroll();
@@ -529,42 +528,6 @@ function serviceStack() {
 }
 
 /** Logos drift left while scrolling down, right while scrolling up. */
-/**
- * Sheets: each [data-sheet] section slides over the section before it. That section sticks once its
- * bottom reaches the bottom of the screen, then dims and recedes as the sheet covers it; the hero's photo
- * instead clips down into a rounded card. Sticky sections throw off ScrollTrigger's measurements, so they're
- * released while ScrollTrigger measures and re-applied afterwards.
- */
-function sheets() {
-  const secs = $$<HTMLElement>("main > section");
-  const pairs = secs.slice(0, -1).map((s, i) => [s, secs[i + 1]] as const).filter(([, next]) => next.hasAttribute("data-sheet"));
-  if (!pairs.length) return;
-  secs.forEach((s, i) => (s.style.zIndex = String(i + 1)));
-  const release = () => pairs.forEach(([s]) => { s.style.position = ""; s.style.top = ""; });
-  const stick = () =>
-    pairs.forEach(([s]) => {
-      const h = s.offsetHeight;
-      s.style.position = "sticky";
-      s.style.top = `${Math.min(0, innerHeight - h)}px`;
-      // Recede around the middle of what's still on screen (the section's last screenful).
-      s.style.transformOrigin = `50% ${Math.max(0, h - innerHeight / 2)}px`;
-    });
-  ScrollTrigger.addEventListener("refreshInit", release);
-  ScrollTrigger.addEventListener("refresh", stick);
-  pairs.forEach(([s, next]) => {
-    s.classList.add("lp-stuck");
-    const media = s.hasAttribute("data-hero") ? $<HTMLElement>("[data-hero-media]", s) : null;
-    const tl = gsap.timeline({ scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
-    tl.fromTo(s, { "--dim": 0 }, { "--dim": media ? 0.35 : 0.7, ease: "power1.in" }, 0);
-    if (media) {
-      // The photo becomes a card: inset and round its corners as the page moves on.
-      tl.fromTo(media, { clipPath: "inset(0% 0% 0% 0% round 0px)" }, { clipPath: "inset(10% 6% 10% 6% round 32px)", ease: "power2.inOut" }, 0);
-      tl.to($$("[data-hud], .lp-hero-grid, .lp-hero-sticky", s), { opacity: 0, ease: "power1.in" }, 0);
-    } else tl.fromTo(s, { scale: 1 }, { scale: 0.94, ease: "none" }, 0);
-  });
-  stick();
-}
-
 /** Featured work: as each sticky card is covered by the next, it shrinks back and dims. */
 function caseStack() {
   const cases = $$("[data-case]");
