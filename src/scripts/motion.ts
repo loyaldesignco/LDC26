@@ -587,7 +587,6 @@ function heroScroll() {
   const hero = $("[data-hero]");
   const img = $("[data-parallax-img]");
   if (!hero || !img) return;
-  const canvas = $("[data-hero-canvas]");
   const sheen = $("[data-glass-sheen]", hero);
   const banner = $("[data-glass-banner]");
   const line = $("[data-hero-note-line]");
@@ -599,9 +598,7 @@ function heroScroll() {
     const r = hero.getBoundingClientRect();
     const total = Math.max(1, r.height - innerHeight);
     const p = Math.min(1, Math.max(0, -r.top / total));
-    const tf = `translateY(${((p - 0.5) * r.height * 0.085).toFixed(1)}px) scale(1.2)`;
-    img.style.transform = tf;
-    if (canvas) canvas.style.transform = tf;
+    // The photo scrolls with the track itself (no parallax transform), so it stays top-aligned.
     const lp = Math.min(1, Math.max(0, (p - 0.02) / 0.14));
     if (line) line.style.transform = `scaleX(${lp.toFixed(3)})`;
     label?.classList.toggle("is-on", lp > 0.85);

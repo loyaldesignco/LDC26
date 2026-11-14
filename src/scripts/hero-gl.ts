@@ -26,7 +26,9 @@ const frag = /* glsl */ `
     vec2 s = uResolution / ts;
     float sc = max(s.x, s.y);
     vec2 sz = ts * sc;
-    vec2 o = (uResolution - sz) * 0.5;
+    // Centered horizontally, pinned to the top (matches the <img>'s object-position: top),
+    // so the photo doesn't shift when the WebGL layer takes over.
+    vec2 o = vec2((uResolution.x - sz.x) * 0.5, uResolution.y - sz.y);
     return (uv * uResolution - o) / sz;
   }
   void main() {
@@ -58,7 +60,7 @@ const vert = /* glsl */ `varying vec2 vUv; void main() { vUv = uv; gl_Position =
 
 export async function heroGL(canvas: HTMLCanvasElement, section: HTMLElement, slides: string[], onChange: (index: number) => void) {
   const renderer = new WebGLRenderer({ canvas, antialias: false, alpha: false });
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5)); // the canvas spans the whole (tall) hero track
   const scene = new Scene();
   const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
   const u = {

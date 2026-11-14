@@ -412,9 +412,11 @@ html:not(.js) [data-underlay-nav-menu]:target { display: block; z-index: 300; }
 
 /* ------------------------------------------------------------------ home */
 
+/* Phones and touch tablets: no track. The hero is one screen (or as tall as its stacked copy needs),
+   the photo covers it from the top, and the stage scrolls normally. */
 @media (max-width: 1024px) and (pointer: coarse), (max-width: 860px) {
-  .lp-hero { min-height: 100svh !important; }
-  .lp-hero-sticky { position: static !important; }
+  .lp-hero { height: auto !important; min-height: 100svh; }
+  .lp-hero-stage { position: relative !important; height: auto !important; min-height: 100svh; }
 }
 @media (max-width: 860px) {
   .lp-hero-grid { grid-template-columns: 1fr !important; }
