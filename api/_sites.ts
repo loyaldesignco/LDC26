@@ -38,4 +38,11 @@ export const SITES: Record<string, SiteConfig> = {
     from: "Loyal Design Co. website <forms@notify.loyal.design>",
     subject: "New project inquiry: {company}{name}",
   },
+  "brosnan-law": {
+    name: "Brosnan & Associates, LLP",
+    origins: ["https://www.brosnanlaw.com", "https://brosnanlaw.com", "https://brosnanlaw.vercel.app"],
+    to: ["info@brosnanlaw.com"],
+    from: "Brosnan & Associates website <forms@notify.loyal.design>",
+    subject: "New website inquiry: {name}",
+  },
 };
