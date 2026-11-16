@@ -55,8 +55,9 @@ const heroTrack = `max(100svh, min(calc(100vw / ${heroAr.toFixed(4)}), 260svh))`
     <div class="wash"></div>
     <div class="pointer-events-none absolute inset-0 bg-[linear-gradient(to_bottom,rgba(10,10,10,0.24),rgba(10,10,10,0)_22%,rgba(10,10,10,0)_62%,rgba(10,10,10,0.3))]"></div>
 
-    <!-- Sticky stage: one screen tall, holds while the photo scrolls beneath it -->
-    <div class="lp-hero-stage sticky top-0 z-[3] flex h-svh flex-col">
+    <!-- Sticky stage: at least one screen tall, holds while the photo scrolls beneath it.
+         On short windows it is taller than the screen: it scrolls until its bottom (the banner) is in view, then holds. -->
+    <div class="lp-hero-stage sticky z-[3] flex min-h-svh flex-col">
     {
       settings.credentials.some((c) => /webflow/i.test(c)) && (
         <div class="absolute right-0 top-[62%] z-[5] leading-none md:top-[44%]">
@@ -121,6 +122,17 @@ const heroTrack = `max(100svh, min(calc(100vw / ${heroAr.toFixed(4)}), 260svh))`
     </div>
     </div>
   </section>
+
+  <script>
+    // Tell the CSS how tall the hero stage is, so a stage taller than the window sticks by its bottom edge.
+    const stage = document.querySelector<HTMLElement>(".lp-hero-stage");
+    const hero = stage?.parentElement;
+    if (stage && hero) {
+      const fit = () => hero.style.setProperty("--stage-h", `${stage.offsetHeight}px`);
+      new ResizeObserver(fit).observe(stage);
+      fit();
+    }
+  </script>
 
   <!-- 01 Studio -->
   <section id="studio" data-chapter class="gutter flex min-h-[72svh] flex-col justify-center pb-[clamp(56px,7vw,96px)] pt-[clamp(88px,13vw,190px)]">

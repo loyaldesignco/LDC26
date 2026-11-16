@@ -412,6 +412,13 @@ html:not(.js) [data-underlay-nav-menu]:target { display: block; z-index: 300; }
 
 /* ------------------------------------------------------------------ home */
 
+/* Hero stage: sticks by its top when it fits the window, by its bottom when it doesn't, so the banner is never cut off.
+   The track is always at least as tall as the stage. --stage-h is measured in index.astro. */
+.lp-hero { min-height: var(--stage-h, 100svh); }
+.lp-hero-stage { top: min(0px, calc(100svh - var(--stage-h, 100svh))); }
+/* Short windows: size the headline by height too, so less of the stage has to scroll. */
+.lp-hero .display-xl { font-size: clamp(3.2rem, min(8.6vw, 15svh), 9rem); }
+
 /* Phones and touch tablets: no track. The hero is one screen (or as tall as its stacked copy needs),
    the photo covers it from the top, and the stage scrolls normally. */
 @media (max-width: 1024px) and (pointer: coarse), (max-width: 860px) {
