@@ -1,6 +1,7 @@
 import { altImage, fact, plate, processStep, richText } from "./objects";
 import { project } from "./project";
 import { post, service, siteSettings, testimonial } from "./documents";
+import { formSubmission } from "./formSubmission";
 
 export const schemaTypes = [
   // objects
@@ -15,4 +16,5 @@ export const schemaTypes = [
   service,
   post,
   testimonial,
+  formSubmission,
 ];

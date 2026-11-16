@@ -9,6 +9,7 @@
  * Environment (Vercel → Project → Settings → Environment Variables):
  *   POSTMARK_SERVER_TOKEN  Postmark server API token
  *   RECAPTCHA_SECRET       reCAPTCHA v3 secret key (shared key listing every site's domain)
+ *   SANITY_FORMS_TOKEN     Sanity Editor token, for sites that also save submissions (`store` in ./_sites.ts)
  *
  * GET returns a health check that says whether those are configured, without revealing them.
  */
@@ -41,7 +42,51 @@ export function OPTIONS(request: Request) {
 }
 
 export function GET() {
-  return json({ ok: true, service: "forms", sites: Object.keys(SITES), postmark: Boolean(process.env.POSTMARK_SERVER_TOKEN), recaptcha: Boolean(process.env.RECAPTCHA_SECRET) }, 200);
+  const storage = Object.fromEntries(Object.entries(SITES).filter(([, s]) => s.store).map(([k, s]) => [k, Boolean(process.env[s.store!.tokenEnv ?? "SANITY_FORMS_TOKEN"])]));
+  return json({ ok: true, service: "forms", sites: Object.keys(SITES), postmark: Boolean(process.env.POSTMARK_SERVER_TOKEN), recaptcha: Boolean(process.env.RECAPTCHA_SECRET), storage }, 200);
+}
+
+/** Save a submission to Sanity. Returns an error message, or null when saved. */
+async function storeSubmission(
+  site: SiteConfig,
+  siteKey: string,
+  doc: { name: string; email: string; company: string; rows: [string, string][]; page: string | null; emailStatus: "sent" | "failed"; emailError?: string },
+): Promise<string | null> {
+  const store = site.store!;
+  const token = process.env[store.tokenEnv ?? "SANITY_FORMS_TOKEN"];
+  if (!token) return "storage token not configured";
+  const id = crypto.randomUUID();
+  const body = {
+    mutations: [
+      {
+        create: {
+          _id: `submissions.${id}`, // the path keeps it private in a public dataset
+          _type: "formSubmission",
+          status: "new",
+          submittedAt: new Date().toISOString(),
+          site: siteKey,
+          name: doc.name || undefined,
+          email: doc.email || undefined,
+          company: doc.company || undefined,
+          page: doc.page && /^https?:\/\//.test(doc.page) ? doc.page : undefined,
+          fields: doc.rows.map(([k, v], i) => ({ _key: `f${i}`, _type: "formField", key: k, label: label(k), value: v })),
+          emailStatus: doc.emailStatus,
+          emailError: doc.emailError,
+        },
+      },
+    ],
+  };
+  try {
+    const res = await fetch(`https://${store.projectId}.api.sanity.io/v2024-01-01/data/mutate/${store.dataset}?returnIds=false&visibility=async`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+    });
+    if (!res.ok) return `sanity ${res.status}: ${(await res.text()).slice(0, 200)}`;
+    return null;
+  } catch (e) {
+    return `sanity request failed: ${(e as Error).message}`;
+  }
 }
 
 async function readFields(request: Request): Promise<Map<string, string>> {
@@ -135,11 +180,22 @@ export async function POST(request: Request) {
       Metadata: { site: siteKey },
     }),
   });
+  let emailError: string | undefined;
   if (!res.ok) {
     const body = (await res.json().catch(() => ({}))) as { ErrorCode?: number; Message?: string };
     console.error("forms: postmark", res.status, body);
     // Postmark's code and message (e.g. 412 while the account awaits approval) help diagnose; they hold no secrets.
-    return json({ ok: false, error: "Email failed to send", reason: `postmark ${body.ErrorCode ?? res.status}: ${body.Message ?? ""}`.trim() }, 502, origin);
+    emailError = `postmark ${body.ErrorCode ?? res.status}: ${body.Message ?? ""}`.trim();
   }
+
+  // Keep a copy in Sanity for sites that want one. A saved submission counts as received even if the email failed.
+  let stored = false;
+  if (site.store) {
+    const err = await storeSubmission(site, siteKey, { name, email, company, rows, page: request.headers.get("referer"), emailStatus: emailError ? "failed" : "sent", emailError });
+    if (err) console.error("forms: store", siteKey, err);
+    else stored = true;
+  }
+
+  if (emailError && !stored) return json({ ok: false, error: "Email failed to send", reason: emailError }, 502, origin);
   return json({ ok: true }, 200, origin);
 }

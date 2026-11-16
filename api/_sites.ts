@@ -28,6 +28,12 @@ export interface SiteConfig {
   postmarkTokenEnv?: string;
   /** Minimum reCAPTCHA v3 score to accept (0–1, default 0.5). */
   minScore?: number;
+  /**
+   * Also save every submission to Sanity as a `formSubmission` document (the schema lives in studio/schemaTypes).
+   * Documents get `submissions.`-prefixed IDs, which Sanity keeps private even in a public dataset.
+   * `tokenEnv` names the env var holding an Editor token for that project (default SANITY_FORMS_TOKEN).
+   */
+  store?: { projectId: string; dataset: string; tokenEnv?: string };
 }
 
 export const SITES: Record<string, SiteConfig> = {
@@ -37,6 +43,7 @@ export const SITES: Record<string, SiteConfig> = {
     to: ["hello@loyal.design"],
     from: "Loyal Design Co. website <forms@notify.loyal.design>",
     subject: "New project inquiry: {company}{name}",
+    store: { projectId: "9xn8x41p", dataset: "production" },
   },
   "brosnan-law": {
     name: "Brosnan & Associates, LLP",
