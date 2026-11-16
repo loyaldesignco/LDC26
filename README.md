@@ -38,7 +38,7 @@ Once connected, the site reads Sanity first and falls back per query if a reques
 | Type | What it drives |
 | --- | --- |
 | Site settings (singleton) | Email, location, socials, credentials, hero slides, the three home work panels, the How we work image, the client logo marquee, the About portrait |
-| Project | Work grid and list, case studies. **Year** drives sorting; **Services** (Branding, Webflow, Product Design, Strategy) drive filters and the home banner counts; **Statement** and **Client logo** show on the case study |
+| Project | Work grid and list, case studies. **Year** drives sorting; **Services** (Branding, Websites, Product Design, Strategy) drive filters and the home banner counts; **Statement** and **Client logo** show on the case study |
 | Service | Home and /services rows. Give one a slug and fill the "Service page" fields to publish `/services/<slug>`; without a slug the row links to its work filter |
 | Journal post | /journal |
 
@@ -48,7 +48,7 @@ Projects and services are drag-to-order in the Studio.
 
 - **Adobe Fonts:** web project `bfo4mcg` ("Loyal Web": Marlide Display Variable + Neue Haas Grotesk Display), loaded with the CSS embed, non-blocking, in `BaseLayout.astro`. The project must list loyal.design and any preview domains, with Font display set to swap. Until it loads, text sets in metric-matched local fallbacks (`global.css`) so nothing reflows.
 - **Contact form:** posts to the shared forms service at `/api/forms` (`api/forms.ts`), which checks the honeypot and reCAPTCHA v3 and emails the submission through Postmark from `forms@notify.loyal.design`. Needs `POSTMARK_SERVER_TOKEN` and `RECAPTCHA_SECRET` in Vercel; `GET /api/forms` reports whether they're set. Client sites can use the same service: add them in `api/_sites.ts`. `PUBLIC_FORM_ENDPOINT` overrides the endpoint; an empty value makes the last step open the visitor's email app.
-- **Copy to confirm:** Webflow FAQ prices ($18k, $30k to $60k), the budget ranges on /contact, and the About timeline came from the design draft.
+- **Copy to confirm:** Websites FAQ prices ($18k, $30k to $60k), the budget ranges on /contact, and the About timeline came from the design draft.
 - **Bauhaus Desk Display** (menu face) is self-hosted: check the licence covers web use.
 - **Years** for Fighters Market and Brandon James Construction aren't recorded, so they sort last.
 - **New domains:** add each one (including loyal.design once it points at Vercel) to the Sanity project's CORS origins, or the hero slideshow falls back to its first image.

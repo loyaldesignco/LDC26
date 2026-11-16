@@ -8,7 +8,7 @@ const [services, settings] = await Promise.all([getServices(), getSettings()]);
 const href = (s: Service) => (s.slug ? `/services/${s.slug}` : `/work?f=${encodeURIComponent(s.workFilter ?? "All")}`);
 ---
 
-<BaseLayout title="Services" description="Branding and identity, Webflow and digital, graphic design and strategy from Loyal Design Co, a New York studio est. 2011.">
+<BaseLayout title="Services" description="Branding and identity, fast custom websites, graphic design and strategy from Loyal Design Co, a New York studio est. 2011.">
   <section class="gutter pb-[clamp(56px,8vw,110px)] pt-[clamp(104px,11vw,160px)]">
     <div data-hud class="mono mb-[clamp(20px,3vw,36px)] flex justify-between gap-4 text-[0.7rem] text-paper/50">
       <span>[ Services ]</span>

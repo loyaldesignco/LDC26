@@ -24,7 +24,7 @@ export const service = defineType({
     defineField({
       name: "workFilter",
       type: "string",
-      options: { list: ["Branding", "Webflow", "Product Design", "Strategy"] },
+      options: { list: ["Branding", "Websites", "Product Design", "Strategy", { title: "Webflow (old name for Websites)", value: "Webflow" }] },
     }),
     defineField({ name: "image", type: "altImage" }),
     defineField({ name: "meta", type: "string", fieldset: "page" }),
@@ -77,7 +77,7 @@ export const post = defineType({
     defineField({
       name: "category",
       type: "string",
-      options: { list: ["Webflow", "Branding", "Search", "Studio"] },
+      options: { list: ["Websites", "Webflow", "Branding", "Search", "Studio"] },
       validation: (r) => r.required(),
     }),
     defineField({ name: "excerpt", type: "text", rows: 3, validation: (r) => r.required().max(240) }),

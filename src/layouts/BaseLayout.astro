@@ -15,7 +15,7 @@ interface Props {
 }
 const [settings, services] = await Promise.all([getSettings(), getServices()]);
 const { title, description = settings.description, image } = Astro.props;
-const fullTitle = title ? `${title} | ${settings.title}` : `${settings.title}, a New York design and Webflow studio`;
+const fullTitle = title ? `${title} | ${settings.title}` : `${settings.title}, a New York design and web studio`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = image ? new URL(image, Astro.site).toString() : undefined;
 // Adobe Fonts web project "Loyal Web" (CSS embed): Marlide Display Variable + Neue Haas Grotesk Display.
@@ -43,7 +43,7 @@ const orgSchema = {
       image: `${site}/brand/loyal-logo-512.png`,
       address: { "@type": "PostalAddress", addressLocality: "New York", addressRegion: "NY", addressCountry: "US" },
       areaServed: { "@type": "Country", name: "United States" },
-      knowsAbout: ["Branding", "Brand identity", "Logo design", "Webflow development", "Web design", "Product design", "Brand strategy"],
+      knowsAbout: ["Branding", "Brand identity", "Logo design", "Web design", "Website development", "Web performance", "Headless CMS", "Astro", "Sanity", "Webflow development", "Product design", "Brand strategy"],
       award: settings.credentials.filter((c) => /partner/i.test(c)),
       sameAs,
     },

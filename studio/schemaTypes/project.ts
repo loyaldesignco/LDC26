@@ -1,7 +1,9 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
 import { orderRankField, orderRankOrdering } from "@sanity/orderable-document-list";
 
-const SERVICES = ["Branding", "Webflow", "Product Design", "Strategy", "Hosting"];
+const SERVICES = ["Branding", "Websites", "Product Design", "Strategy", "Hosting"];
+// "Webflow" is the web category's old name. Older entries still use it and the site reads it as Websites.
+const LEGACY = [{ title: "Webflow (old name for Websites)", value: "Webflow" }];
 
 export const project = defineType({
   name: "project",
@@ -57,7 +59,7 @@ export const project = defineType({
       type: "array",
       group: "meta",
       of: [defineArrayMember({ type: "string" })],
-      options: { list: SERVICES.map((s) => ({ title: s, value: s })), layout: "grid" },
+      options: { list: [...SERVICES.map((s) => ({ title: s, value: s })), ...LEGACY], layout: "grid" },
     }),
     defineField({
       name: "featured",

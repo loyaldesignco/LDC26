@@ -25,4 +25,6 @@ export const legacyRedirects = {
   "/ronin-emperor": "/work/ronin-emperor",
   "/ronin-lonewolf-gi-rashguard": "/work",
   "/shellproof-security": "/work/shellproof-security",
+  // Service renamed from "Webflow & Digital"
+  "/services/webflow-digital": "/services/websites",
 };

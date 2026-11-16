@@ -77,19 +77,23 @@ export const getSettings = () =>
     fallback.settings,
   );
 
+/** "Webflow" was the web category's old name; content saved before the rename still uses it. */
+const legacyCategory = (s: string) => (s === "Webflow" ? "Websites" : s);
+const withCategories = <T extends Project | null>(p: T): T => (p ? { ...p, services: (p.services ?? []).map(legacyCategory) } : p);
+
 export const getProjects = () =>
   query<Project[]>(
     `*[_type == "project" && defined(slug.current)] | order(orderRank asc, partnerSince desc){ ${projectCard} }`,
     {},
     fallback.projects,
-  );
+  ).then((list) => list.map(withCategories));
 
 export const getProject = async (slug: string) =>
   query<Project | null>(
     `*[_type == "project" && slug.current == $slug][0]{ ${projectCard}, gallery, facts, body }`,
     { slug },
     fallback.projects.find((p) => p.slug === slug) ?? null,
-  );
+  ).then(withCategories);
 
 export const getServices = () =>
   query<Service[]>(
@@ -99,7 +103,7 @@ export const getServices = () =>
     }`,
     {},
     fallback.services,
-  );
+  ).then((list) => list.map((s) => (s.workFilter ? { ...s, workFilter: legacyCategory(s.workFilter) } : s)));
 
 const postCard = `_id, title, "slug": slug.current, publishedAt, category, excerpt, cover, ${plate}`;
 
@@ -127,7 +131,7 @@ export const getTestimonials = () =>
 /* ----------------------------- helpers ---------------------------- */
 
 /** The filter set on /work and the counts on the home banner. Order matters. */
-export const WORK_CATEGORIES = ["Branding", "Webflow", "Product Design", "Strategy"] as const;
+export const WORK_CATEGORIES = ["Branding", "Websites", "Product Design", "Strategy"] as const;
 
 export function categoriesOf(p: Pick<Project, "services">): string[] {
   return p.services.filter((s) => (WORK_CATEGORIES as readonly string[]).includes(s));

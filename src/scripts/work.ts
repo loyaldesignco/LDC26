@@ -38,7 +38,8 @@ export function initWorkIndex() {
   const rows = Array.from(listOl.querySelectorAll<HTMLElement>("[data-item]"));
   const original = new Map(cards.map((c, i) => [c.dataset.slug!, i]));
 
-  const fromUrl = new URLSearchParams(location.search).get("f");
+  // Old links used "Webflow" for the web category.
+  const fromUrl = ((f) => (f === "Webflow" ? "Websites" : f))(new URLSearchParams(location.search).get("f"));
   const state = {
     filter: filterBtns.some((b) => b.dataset.filter === fromUrl) ? fromUrl! : "All",
     sort: ((s) => (s && s in SORT_LABELS ? s : "newest"))(store.get("lp-work-sort")) as SortKey,

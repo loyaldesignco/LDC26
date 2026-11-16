@@ -121,6 +121,11 @@
       "statusCode": 301
     },
     {
+      "source": "/services/webflow-digital",
+      "destination": "/services/websites",
+      "statusCode": 301
+    },
+    {
       "source": "/sitemap.xml",
       "destination": "/sitemap-index.xml",
       "statusCode": 301
