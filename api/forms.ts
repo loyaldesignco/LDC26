@@ -157,7 +157,13 @@ export async function POST(request: Request) {
 
   const name = (fields.get("name") ?? "").trim();
   const company = (fields.get("company") ?? "").trim();
-  const subject = site.subject.replace("{company}", company && name ? `${company}, ` : company).replace("{name}", name).replace(/[:,]\s*$/, "") || `New submission, ${site.name}`;
+  // {company} and {name} are special-cased; any other {field} is filled from the form field of that name.
+  const subject =
+    site.subject
+      .replace("{company}", company && name ? `${company}, ` : company)
+      .replace("{name}", name)
+      .replace(/\{(\w+)\}/g, (_, k: string) => (fields.get(k) ?? "").replace(/\s+/g, " ").trim().slice(0, 100))
+      .replace(/^[\s:,]+|[\s:,]+$/g, "") || `New submission, ${site.name}`;
   const rows = content.filter(([, v]) => v.trim());
   const TextBody = rows.map(([k, v]) => `${label(k)}:\n${v}\n`).join("\n") + `\n— Sent from ${origin}`;
   const HtmlBody =

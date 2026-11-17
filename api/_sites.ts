@@ -20,7 +20,7 @@ export interface SiteConfig {
   to: string[];
   /** Sender, on a domain verified in Postmark. */
   from: string;
-  /** Subject line; {name} and {company} are filled from the form when present. */
+  /** Subject line; {name}, {company} or any other {field} is filled from the form when present. */
   subject: string;
   /** Env var holding this site's reCAPTCHA secret, if it has its own key (default RECAPTCHA_SECRET). */
   recaptchaSecretEnv?: string;
@@ -51,5 +51,14 @@ export const SITES: Record<string, SiteConfig> = {
     to: ["info@brosnanlaw.com"],
     from: "Brosnan & Associates website <forms@notify.loyal.design>",
     subject: "New website inquiry: {name}",
+  },
+  esa: {
+    name: "Emerson Souza BJJ",
+    origins: ["https://souzabjj.com", "https://www.souzabjj.com", "https://esa27.vercel.app"],
+    to: ["souzabjj@gmail.com"],
+    from: "Emerson Souza BJJ website <forms@notify.loyal.design>",
+    // The site sends a `form` field: "Signed waiver" or "Free class request"
+    subject: "{form}: {name}",
+    store: { projectId: "32uvoe9x", dataset: "production", tokenEnv: "SANITY_FORMS_TOKEN_ESA" },
   },
 };
